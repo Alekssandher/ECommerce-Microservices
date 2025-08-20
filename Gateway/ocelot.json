@@ -1,0 +1,41 @@
+{
+    "GlobalConfiguration": {
+        "BaseUrl": "https://localhost:5001"
+    },
+    "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "10s",
+        "Limit": 5,
+        "PeriodTimespan": 50
+    },
+    "Routes": [
+        {
+            "UpstreamPathTemplate": "",
+            "UpstreamHttpMethod": [ "" ],
+            "DownStreamPathTemplate": "",
+            "DownStreamScheme": "https",
+            "DownStreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 5002
+                }
+            ]
+            ,
+            "FileCacheOptions": {
+                "TtlSeconds": 10
+            }
+        },
+        {
+            "UpstreamPathTemplate": "",
+            "UpstreamHttpMethod": [ "" ],
+            "DownStreamPathTemplate": "",
+            "DownStreamScheme": "https",
+            "DownStreamHostAndPorts": [
+                {
+                    "Host": "localhost",
+                    "Port": 5002
+                }
+            ]
+        }
+    ]
+}
