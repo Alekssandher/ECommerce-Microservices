@@ -6,6 +6,7 @@ builder.Services.RegisterDependencies(builder.Configuration);
 
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

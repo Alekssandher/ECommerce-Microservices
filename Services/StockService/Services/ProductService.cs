@@ -5,7 +5,7 @@ using Shared.Exceptions;
 
 namespace StockService.Services
 {
-    public class ProductService : IProductService
+    internal class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
         public ProductService(IProductRepository productRepository)

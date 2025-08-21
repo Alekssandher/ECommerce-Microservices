@@ -13,7 +13,7 @@ namespace StockService.Infraestructure.Data
         }
 
         public DbSet<Product> Products { get; set; } = default!;
-        
+        public DbSet<StockItem> Stocks { get; set; } = default!;
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var connectionString = _config.GetConnectionString("mysql") ?? throw new Exception("Connection String Is Missing.");
