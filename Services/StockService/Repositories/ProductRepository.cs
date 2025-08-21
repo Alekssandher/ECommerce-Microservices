@@ -41,8 +41,16 @@ namespace StockService.Repositories
 
         }
 
-        public Task UpdateStockAsync(Product product)
+        public Task UpdateEntireProductAsync(Product product)
         {
+            var affected = _stockContext.Products
+                .Where(p => p.Id == product.Id)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(p => p.Name, product.Name)
+                    .SetProperty(p => p.Description, product.Description)
+                    .SetProperty(p => p.Price, product.Price)
+                    .SetProperty(p => p.Quantity, product.Quantity)
+                );
             throw new NotImplementedException();
         }
     }

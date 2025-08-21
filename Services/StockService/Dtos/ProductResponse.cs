@@ -1,25 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace StockService.Dtos
 {
-    public class ProductRequest
+    public class ProductResponse
     {
-        [Required]
-        [StringLength(200)]
+        public required int  Id { get; init; }
         public required string Name { get; init; }
 
-        [Required]
-        [StringLength(2000)]
         public required string Description { get; init; }
 
-        [Required]
         public required decimal Price { get; init; }
 
-        [Required]
         public required int Quantity { get; init; }
     }
 }

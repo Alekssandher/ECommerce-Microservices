@@ -14,12 +14,12 @@ namespace StockService.Models
         public int Id { get; init; }
 
         [StringLength(200)]
-        public required string Name { get; init; }
+        public required string Name { get; set; }
 
         [StringLength(2000)]
-        public required string Description { get; init; }
+        public required string Description { get; set; }
 
-        public required decimal Price { get; init; }
+        public required decimal Price { get; set; }
 
         public required int Quantity { get; set; }
         

@@ -11,7 +11,7 @@ namespace StockService.Repositories
         Task<Product?> GetStockByProductIdAsync(int productId);
         Task<List<Product>> GetAllAsync();
         Task AddStockItemAsync(Product product);
-        Task UpdateStockAsync(Product product);
+        Task UpdateEntireProductAsync(Product product);
         Task RemoveStockAsync(Product product, int quantity);
 
     }
