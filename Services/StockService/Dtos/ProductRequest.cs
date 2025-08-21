@@ -1,28 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace StockService.Models
+namespace StockService.Dtos
 {
-    public class Product
+    internal class ProductRequest
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; init; }
-
+        [Required]
         [StringLength(200)]
         public required string Name { get; init; }
 
+        [Required]
         [StringLength(2000)]
         public required string Description { get; init; }
 
+        [Required]
         public required decimal Price { get; init; }
 
-        public required int Quantity { get; set; }
-        
-
+        [Required]
+        public required int Quantity { get; init; }
     }
 }
