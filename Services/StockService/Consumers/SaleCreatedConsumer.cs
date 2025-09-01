@@ -23,7 +23,15 @@ namespace StockService.Consumers
         {
             var message = context.Message;
             
-            await _stockService.RemoveStockAsync(message.ProductId, message.Quantity);
+            try
+            {
+                await _stockService.ReserveStockAsync(message.ProductId, message.Quantity);
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            };
         }
     }
 }

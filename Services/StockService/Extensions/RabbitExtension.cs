@@ -19,6 +19,8 @@ namespace StockService.Extensions
             services.AddMassTransit(busConfigurator =>
             {
                 busConfigurator.AddConsumer<SaleCreatedConsumer>();
+                busConfigurator.AddConsumer<SaleConfirmedConsumer>();
+                busConfigurator.AddConsumer<SaleCanceledConsumer>();
 
                 busConfigurator.UsingRabbitMq((ctx, cfg) =>
                 {
