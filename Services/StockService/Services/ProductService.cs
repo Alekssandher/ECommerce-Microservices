@@ -8,49 +8,55 @@ namespace StockService.Services
     internal class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
+        
         public ProductService(IProductRepository productRepository)
         {
             _productRepository = productRepository;
         }
 
-        public async Task CreateProduct(ProductRequest productRequest)
+        public async Task CreateProductAsync(CreateProductRequest request)
         {
-            await _productRepository.AddStockItemAsync(productRequest.ToModel());
+            var product = request.ToProductModel();
+            await _productRepository.CreateProductAsync(product);
         }
 
-        public async Task DeleteProduct(int productId, int quantity)
+        public async Task RemoveProductQuantityAsync(int productId, int quantity)
         {
-            var product = await _productRepository.GetStockByProductIdAsync(productId) ?? throw new Exceptions.NotFoundException("Product Not Found");
+            var product = await _productRepository.GetProductByIdAsync(productId) 
+                ?? throw new Exceptions.NotFoundException("Product not found");
 
-            await _productRepository.RemoveStockAsync(product, quantity);
+            await _productRepository.ReduceProductQuantityAsync(product, quantity);
         }
 
-        public async Task<List<ProductResponse>> GetAllProducts()
+        public async Task<List<ProductResponse>> GetAllProductsAsync()
         {
-            var res =  await _productRepository.GetAllAsync();
-
-            return res.ToProductList();
+            var products = await _productRepository.GetAllProductsAsync();
+            return products.ToProductResponseList();
         }
 
-        public async Task<ProductResponse> GetProductById(int productId)
+        public async Task<ProductResponse> GetProductByIdAsync(int productId)
         {
-            var res = await _productRepository.GetStockByProductIdAsync(productId) ?? throw new Exceptions.NotFoundException("Product Not Found");
+            var product = await _productRepository.GetProductByIdAsync(productId) 
+                ?? throw new Exceptions.NotFoundException("Product not found");
 
-            return res.ToResponse();
+            return product.ToProductResponse();
         }
 
-        public async Task UpdateProduct(ProductUpdateRequest productRequest)
+        public async Task UpdateProductAsync(UpdateProductRequest request)
         {
-            if (productRequest.Id == 0) throw new Exceptions.BadRequestException("Product Id cannot be zero or Null.");
+            if (request.ProductId <= 0) 
+                throw new Exceptions.BadRequestException("Product ID must be greater than zero");
 
-            var product = await _productRepository.GetStockByProductIdAsync(productRequest.Id) ?? throw new Exceptions.NotFoundException("Could Not Find a Product With this ID");
+            var product = await _productRepository.GetProductByIdAsync(request.ProductId) 
+                ?? throw new Exceptions.NotFoundException("Product not found");
 
-            if (productRequest.Name != null) product.Name = productRequest.Name;
-            if (productRequest.Description != null) product.Description = productRequest.Description;
-            if (productRequest.Price != null) product.Price = (decimal)productRequest.Price;
-            if (productRequest.Quantity != null) product.Quantity = (int)productRequest.Quantity;
+            // Atualizar apenas os campos fornecidos
+            if (request.Name != null) product.Name = request.Name;
+            if (request.Description != null) product.Description = request.Description;
+            if (request.Price.HasValue) product.Price = request.Price.Value;
+            if (request.Quantity.HasValue) product.Quantity = request.Quantity.Value;
 
-            await _productRepository.UpdateEntireProductAsync(product);
+            await _productRepository.UpdateProductAsync(product);
         }
     }
 }

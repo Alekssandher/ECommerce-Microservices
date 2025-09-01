@@ -10,47 +10,42 @@ namespace StockService.Repositories
 {
     internal class StockRepository : IStockRepository
     {
-        private readonly StockContext _stockContext;
-        public StockRepository(StockContext stockContext)
+        private readonly StockContext _context;
+        
+        public StockRepository(StockContext context)
         {
-            _stockContext = stockContext;
+            _context = context;
         }
 
-        public async Task<StockItem> GetStockByProductIdAsync(int productId)
+        public async Task<StockItem?> GetStockItemByProductIdAsync(int productId)
         {
-            var res = await _stockContext.Stocks.FirstOrDefaultAsync(s => s.ProductId == productId);
-
-            return res ?? throw new Exception();
+            return await _context.Stocks.FirstOrDefaultAsync(s => s.ProductId == productId);
         }
 
-        public async Task<int> GetStockQuantityByProductIdAsync(int productId)
+        public async Task<int> GetAvailableQuantityAsync(int productId)
         {
-            var res = await _stockContext.Stocks.FirstOrDefaultAsync(s => s.ProductId == productId);
-
-            return res?.QuantityAvailable ?? 0;
+            var stockItem = await _context.Stocks.FirstOrDefaultAsync(s => s.ProductId == productId);
+            return stockItem?.QuantityAvailable ?? 0;
         }
 
-        public async Task ReleaseStockAsync(StockItem stockItem, int quantity)
+        public async Task ReleaseReservedStockAsync(StockItem stockItem, int quantity)
         {
             stockItem.QuantityAvailable += quantity;  
             stockItem.QuantityReserved -= quantity;
-
-            await _stockContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveStockAsync(StockItem stockItem, int quantity)
+        public async Task RemoveReservedStockAsync(StockItem stockItem, int quantity)
         {
             stockItem.QuantityReserved -= quantity;   
-    
-            await _stockContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task ReserveStockAsync(StockItem stockItem, int quantity)
         {
             stockItem.QuantityAvailable -= quantity;  
             stockItem.QuantityReserved += quantity;  
-
-            await _stockContext.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace StockService.Dtos
 {
-    public class ProductRequest
+    public class CreateProductRequest
     {
         [Required]
         [StringLength(200)]
@@ -16,6 +16,6 @@ namespace StockService.Dtos
         public required decimal Price { get; init; }
 
         [Required]
-        public required int Quantity { get; init; }
+        public required int InitialQuantity { get; init; }
     }
 }

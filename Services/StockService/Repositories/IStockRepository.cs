@@ -4,14 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using StockService.Models;
 
+
 namespace StockService.Repositories
 {
     public interface IStockRepository
     {
         Task ReserveStockAsync(StockItem stockItem, int quantity);
-        Task ReleaseStockAsync(StockItem stockItem, int quantity);       
-        Task RemoveStockAsync(StockItem stockItem, int quantity);
-        Task<StockItem> GetStockByProductIdAsync(int productId);
-        Task<int> GetStockQuantityByProductIdAsync(int productId); 
+        Task ReleaseReservedStockAsync(StockItem stockItem, int quantity);       
+        Task RemoveReservedStockAsync(StockItem stockItem, int quantity);
+        Task<StockItem?> GetStockItemByProductIdAsync(int productId);
+        Task<int> GetAvailableQuantityAsync(int productId); 
     }
 }

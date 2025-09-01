@@ -5,18 +5,18 @@ namespace StockService.Mappers
 {
     public static class ProductMapper
     {
-        public static Product ToModel(this ProductRequest productRequest)
+        public static Product ToProductModel(this CreateProductRequest request)
         {
             return new Product
             {
-                Name = productRequest.Name,
-                Description = productRequest.Description,
-                Price = productRequest.Price,
-                Quantity = productRequest.Quantity
+                Name = request.Name,
+                Description = request.Description,
+                Price = request.Price,
+                Quantity = request.InitialQuantity
             };
         }
 
-        public static ProductResponse ToResponse(this Product product)
+        public static ProductResponse ToProductResponse(this Product product)
         {
             return new ProductResponse
             {
@@ -28,19 +28,12 @@ namespace StockService.Mappers
             };
         }
 
-        public static List<ProductResponse> ToProductList(this List<Product> products)
+        public static List<ProductResponse> ToProductResponseList(this List<Product> products)
         {
             if (products == null || products.Count == 0)
-                return [];
+                return new List<ProductResponse>();
 
-            return [.. products.Select(product => new ProductResponse{
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                Quantity = product.Quantity
-            })];
-
+            return products.Select(product => product.ToProductResponse()).ToList();
         }
     }
 }

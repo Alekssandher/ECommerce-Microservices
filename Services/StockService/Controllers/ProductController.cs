@@ -16,6 +16,7 @@ namespace StockService.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        
         public ProductController(IProductService productService)
         {
             _productService = productService;
@@ -24,40 +25,35 @@ namespace StockService.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts()
         {
-            var res = await _productService.GetAllProducts();
-
-            return Ok(new OkResponse<List<ProductResponse>>(string.Empty, string.Empty, res));
+            var products = await _productService.GetAllProductsAsync();
+            return Ok(new OkResponse<List<ProductResponse>>(string.Empty, string.Empty, products));
         }
 
         [HttpGet("{productId}")]
         public async Task<IActionResult> GetProductById([FromRoute] int productId)
         {
-            var res = await _productService.GetProductById(productId);
-
-            return Ok(new OkResponse<ProductResponse>(string.Empty, string.Empty, res));
+            var product = await _productService.GetProductByIdAsync(productId);
+            return Ok(new OkResponse<ProductResponse>(string.Empty, string.Empty, product));
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromBody] ProductRequest productRequest)
+        public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequest request)
         {
-            await _productService.CreateProduct(productRequest);
-
+            await _productService.CreateProductAsync(request);
             return Created();
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateProduct([FromBody] ProductUpdateRequest productUpdateRequest)
+        public async Task<IActionResult> UpdateProduct([FromBody] UpdateProductRequest request)
         {
-            await _productService.UpdateProduct(productUpdateRequest);
-
+            await _productService.UpdateProductAsync(request);
             return NoContent();
         }
 
         [HttpDelete("{productId}/{quantity}")]
-        public async Task<IActionResult> DeleteProduct([FromRoute] int productId, [FromRoute] int quantity)
+        public async Task<IActionResult> RemoveProductQuantity([FromRoute] int productId, [FromRoute] int quantity)
         {
-            await _productService.DeleteProduct(productId, quantity);
-
+            await _productService.RemoveProductQuantityAsync(productId, quantity);
             return NoContent();
         }
     }

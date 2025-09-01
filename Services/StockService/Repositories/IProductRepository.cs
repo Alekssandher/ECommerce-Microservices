@@ -4,11 +4,10 @@ namespace StockService.Repositories
 {
     public interface IProductRepository
     {
-        Task<Product?> GetStockByProductIdAsync(int productId);
-        Task<List<Product>> GetAllAsync();
-        Task AddStockItemAsync(Product product);
-        Task UpdateEntireProductAsync(Product product);
-        Task RemoveStockAsync(Product product, int quantity);
-
+        Task<Product?> GetProductByIdAsync(int productId);
+        Task<List<Product>> GetAllProductsAsync();
+        Task CreateProductAsync(Product product);
+        Task UpdateProductAsync(Product product);
+        Task ReduceProductQuantityAsync(Product product, int quantity);
     }
 }

@@ -6,40 +6,41 @@ namespace StockService.Repositories
 {
     internal class ProductRepository : IProductRepository
     {
-        private readonly StockContext _stockContext;
-        public ProductRepository(StockContext stockContext)
+        private readonly StockContext _context;
+        
+        public ProductRepository(StockContext context)
         {
-            _stockContext = stockContext;
+            _context = context;
         }
 
-        public async Task AddStockItemAsync(Product product)
+        public async Task CreateProductAsync(Product product)
         {
-            await _stockContext.Products.AddAsync(product);
-            await _stockContext.SaveChangesAsync();
+            await _context.Products.AddAsync(product);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Product>> GetAllAsync()
+        public async Task<List<Product>> GetAllProductsAsync()
         {
-            return await _stockContext.Products.ToListAsync();
- 
+            return await _context.Products.ToListAsync();
         }
 
-        public async Task<Product?> GetStockByProductIdAsync(int productId)
+        public async Task<Product?> GetProductByIdAsync(int productId)
         {
-            return await _stockContext.Products.FirstOrDefaultAsync(p => p.Id == productId);
+            return await _context.Products.FirstOrDefaultAsync(p => p.Id == productId);
         }
 
-        public async Task RemoveStockAsync(Product product, int quantity)
+        public async Task ReduceProductQuantityAsync(Product product, int quantity)
         {
+            if (product.Quantity < quantity)
+                throw new InvalidOperationException($"Insufficient product quantity. Available: {product.Quantity}, Requested: {quantity}");
+
             product.Quantity -= quantity;
-
-            await _stockContext.SaveChangesAsync();
-
+            await _context.SaveChangesAsync();
         }
 
-        public Task UpdateEntireProductAsync(Product product)
+        public async Task UpdateProductAsync(Product product)
         {
-            var affected = _stockContext.Products
+            await _context.Products
                 .Where(p => p.Id == product.Id)
                 .ExecuteUpdateAsync(setters => setters
                     .SetProperty(p => p.Name, product.Name)
@@ -47,7 +48,6 @@ namespace StockService.Repositories
                     .SetProperty(p => p.Price, product.Price)
                     .SetProperty(p => p.Quantity, product.Quantity)
                 );
-            throw new NotImplementedException();
         }
     }
 }
