@@ -10,7 +10,8 @@ namespace StockService.Repositories
     {
         Task ReserveStockAsync(StockItem stockItem, int quantity);
         Task ReleaseStockAsync(StockItem stockItem, int quantity);       
-        Task RemoveStockAsync(StockItem stockItem, int quantity);  
-        Task<int> GetStockByProductIdAsync(int productId); 
+        Task RemoveStockAsync(StockItem stockItem, int quantity);
+        Task<StockItem> GetStockByProductIdAsync(int productId);
+        Task<int> GetStockQuantityByProductIdAsync(int productId); 
     }
 }

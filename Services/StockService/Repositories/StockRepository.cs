@@ -16,7 +16,14 @@ namespace StockService.Repositories
             _stockContext = stockContext;
         }
 
-        public async Task<int> GetStockByProductIdAsync(int productId)
+        public async Task<StockItem> GetStockByProductIdAsync(int productId)
+        {
+            var res = await _stockContext.Stocks.FirstOrDefaultAsync(s => s.ProductId == productId);
+
+            return res ?? throw new Exception();
+        }
+
+        public async Task<int> GetStockQuantityByProductIdAsync(int productId)
         {
             var res = await _stockContext.Stocks.FirstOrDefaultAsync(s => s.ProductId == productId);
 
