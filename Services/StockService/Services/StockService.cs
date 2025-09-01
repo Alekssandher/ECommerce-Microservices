@@ -35,7 +35,7 @@ namespace StockService.Services
 
         public async Task ReleaseStock(int productId, int quantity)
         {
-            var product = await _productRepository.GetStockByProductIdAsync(productId) 
+            _ = await _productRepository.GetStockByProductIdAsync(productId) 
                 ?? throw new ArgumentException($"Produto {productId} não encontrado.");
 
             var stockItem = await _stockRepository.GetStockByProductIdAsync(productId);
