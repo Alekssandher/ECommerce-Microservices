@@ -50,7 +50,6 @@ namespace StockService.Services
             var product = await _productRepository.GetProductByIdAsync(request.ProductId) 
                 ?? throw new Exceptions.NotFoundException("Product not found");
 
-            // Atualizar apenas os campos fornecidos
             if (request.Name != null) product.Name = request.Name;
             if (request.Description != null) product.Description = request.Description;
             if (request.Price.HasValue) product.Price = request.Price.Value;

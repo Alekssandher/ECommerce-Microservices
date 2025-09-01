@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using StockService.Infraestructure.Data;
 using StockService.Repositories;
@@ -23,6 +24,7 @@ namespace StockService.Extensions
             // Services
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IStockManagementService, StockManagementService>();
+
         }
     }
 }

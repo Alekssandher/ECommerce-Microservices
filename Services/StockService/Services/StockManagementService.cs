@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Shared.Exceptions;
+using StockService.Models;
 using StockService.Repositories;
 
 namespace StockService.Services
@@ -19,7 +21,7 @@ namespace StockService.Services
 
         public async Task<int> GetAvailableStockAsync(int productId)
         {
-            // Verificar se o produto existe
+            
             _ = await _productRepository.GetProductByIdAsync(productId) 
                 ?? throw new ArgumentException($"Product {productId} not found");
             
@@ -57,6 +59,15 @@ namespace StockService.Services
                 throw new InvalidOperationException($"Cannot remove more than reserved. Reserved: {stockItem.QuantityReserved}, Requested: {quantity}");
 
             await _stockRepository.RemoveReservedStockAsync(stockItem, quantity);
+        }
+
+        public async Task<StockItem> GetStockItemAsync(int stockId)
+        {
+            var stockItem = await _stockRepository.GetStockItemByProductIdAsync(stockId)
+                ?? throw new Exceptions.NotFoundException("There's no item with this ID");
+
+            return stockItem;
+
         }
     }
 }
