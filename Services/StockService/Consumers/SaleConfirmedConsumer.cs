@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MassTransit;
 using Shared.Messages;
-using Shared.ModelViews;
+using Shared.DTOs;
 using StockService.Services;
 
 namespace StockService.Consumers
