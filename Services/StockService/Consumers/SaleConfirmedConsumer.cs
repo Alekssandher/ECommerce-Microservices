@@ -7,6 +7,7 @@ using Shared.Messages;
 using Shared.DTOs;
 using StockService.Services;
 
+
 namespace StockService.Consumers
 {
     public class SaleConfirmedConsumer : IConsumer<SaleConfirmed>
