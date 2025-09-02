@@ -4,7 +4,7 @@ namespace SalesService.Repositories.Interfaces
 {
     internal interface ISalesRepository
     {
-        Task CreateSaleAsync(Sale sale);
+        Task<Sale> CreateSaleAsync(Sale sale);
         Task ConfirmSaleAsync(Sale sale);
         Task<Sale?> GetByIdAsync(int id);
         Task<List<Sale>> GetAllAsync();
