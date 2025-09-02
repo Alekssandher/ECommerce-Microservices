@@ -9,6 +9,6 @@ namespace Shared.DTOs
     {
         public int StockItemId { get; set; }
         public int Quantity { get; set; }
-        public DateTime ReleasedAt { get; set; }
+        public DateTime Canceled { get; set; }
     }
 }

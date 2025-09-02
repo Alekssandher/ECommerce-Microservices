@@ -1,8 +1,10 @@
+using Shared.Extensions;
 using SalesService.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.RegisterDependencies(builder.Configuration);
+builder.Services.AddRabbit(builder.Configuration);
 
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();

@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 using Microsoft.EntityFrameworkCore;
+using SalesService.Models;
 
 namespace SalesService.Infraestructure.Data
 {
@@ -15,6 +11,8 @@ namespace SalesService.Infraestructure.Data
         {
             _config = config;
         }
+
+        internal DbSet<Sale> Sales { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

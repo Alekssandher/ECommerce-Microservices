@@ -1,3 +1,4 @@
+using Shared.Extensions;
 using StockService.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);

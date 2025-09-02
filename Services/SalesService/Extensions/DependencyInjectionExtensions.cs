@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SalesService.Infraestructure.Data;
+using SalesService.Repositories;
+using SalesService.Repositories.Interfaces;
+using SalesService.Services.Interfaces;
 
 namespace SalesService.Extensions
 {
@@ -19,10 +18,10 @@ namespace SalesService.Extensions
             );
 
             // Repositories
-           
+            services.AddScoped<ISalesRepository, SalesRepository>();
 
             // Services
-            
+            services.AddScoped<ISalesService, Services.SalesService>();
 
         }
     }

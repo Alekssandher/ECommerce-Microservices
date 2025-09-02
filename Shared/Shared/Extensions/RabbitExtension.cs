@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MassTransit;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using StockService.Consumers;
 
-namespace StockService.Extensions
+namespace Shared.Extensions
 {
-    internal static class RabbitExtension
+    public static class RabbitExtension
     {
         public static void AddRabbit(this IServiceCollection services, IConfiguration configuration)
         {

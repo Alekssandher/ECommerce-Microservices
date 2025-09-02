@@ -1,0 +1,28 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Services.Models;
+
+namespace SalesService.Models
+{
+    internal class Sale
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; init; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public int CustomerId { get; set; } 
+
+        public SaleStatus Status { get; set; } = SaleStatus.Pending;
+
+        public List<SaleItem> Items { get; set; } = [];
+    }
+
+    internal enum SaleStatus
+    {
+        Pending,
+        Confirmed,
+        Canceled
+    }
+}
