@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SalesService.DTOs
 {
-    internal class ItemRequest
+    public class ItemRequest
     {
         public int SaleId { get; set; }
         public int ProductId { get; set; }

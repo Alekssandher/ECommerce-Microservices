@@ -2,7 +2,7 @@ using SalesService.DTOs;
 
 namespace SalesService.Services.Interfaces
 {
-    internal interface ISalesService
+    public interface ISalesService
     {
         Task CreateSaleAsync(SaleRequest request);
         Task<SaleResponse> GetSaleByIdAsync(int saleId);

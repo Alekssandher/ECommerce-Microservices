@@ -1,6 +1,6 @@
 namespace SalesService.DTOs
 {
-    internal class SaleRequest
+    public class SaleRequest
     {
         public int CustomerId { get; init; }
 

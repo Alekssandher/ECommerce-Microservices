@@ -2,7 +2,7 @@ using SalesService.Models;
 
 namespace SalesService.DTOs
 {
-    internal class SaleResponse
+    public class SaleResponse
     {
         public int Id { get; set; }              
         public int CustomerId { get; set; }      

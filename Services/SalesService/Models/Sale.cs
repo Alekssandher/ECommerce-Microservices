@@ -19,7 +19,7 @@ namespace SalesService.Models
         public List<SaleItem> Items { get; set; } = [];
     }
 
-    internal enum SaleStatus
+    public enum SaleStatus
     {
         Pending,
         Confirmed,

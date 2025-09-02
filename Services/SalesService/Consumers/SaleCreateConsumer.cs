@@ -19,24 +19,25 @@ namespace SalesService.Consumers
 
         public async Task Consume(ConsumeContext<SaleRequest> context)
         {
-            var message = context.Message;
-
-            try
-            {
-                await _publishEndpoint.Publish(new SaleConfirmed(message.CustomerId, message.ProductId, message.Quantity));
-            }
-            catch (Exception ex)
-            {
-                await _publishEndpoint.Publish(new SaleCreationFailed(
-                    message.CustomerId,
-                    message.ProductId,
-                    message.Quantity,
-                    ex.Message
-                    )
-                );
-               
-            }
             
+            // var message = context.Message;
+
+            // try
+            // {
+            //     await _publishEndpoint.Publish(new SaleConfirmed(message.CustomerId, message.ProductId, message.Quantity));
+            // }
+            // catch (Exception ex)
+            // {
+            //     await _publishEndpoint.Publish(new SaleCreationFailed(
+            //         message.CustomerId,
+            //         message.ProductId,
+            //         message.Quantity,
+            //         ex.Message
+            //         )
+            //     );
+
+            // }
+
         }
     }
 }
