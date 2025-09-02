@@ -5,5 +5,5 @@ using System.Threading.Tasks;
 
 namespace Shared.Messages
 {
-    public record SaleConfirmed(int StockItemId, int Quantity);
+    public record SaleConfirmed(int CustomerId, int StockItemId, int Quantity);
 }

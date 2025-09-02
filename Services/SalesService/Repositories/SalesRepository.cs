@@ -21,6 +21,22 @@ namespace SalesService.Repositories
 
         }
 
+        public async Task ConfirmSaleAsync(Sale sale)
+        {
+            await _salesContext.Sales
+                .Where(s => s.Id == sale.Id)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(p => p.Status, SaleStatus.Confirmed)
+                );
+
+        }
+
+        public async Task CreateSaleAsync(Sale sale)
+        {
+            await _salesContext.Sales.AddAsync(sale);
+            await _salesContext.SaveChangesAsync();
+        }
+
         public async Task<List<Sale>> GetAllAsync()
         {
             return await _salesContext.Sales.ToListAsync();

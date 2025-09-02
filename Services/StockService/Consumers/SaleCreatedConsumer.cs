@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using MassTransit;
 using Shared.Exceptions;
 using Shared.Messages;
+using Shared.ModelViews;
+using StockService.Consumers.DTOs;
 using StockService.Services;
 
 namespace StockService.Consumers
@@ -22,16 +24,30 @@ namespace StockService.Consumers
         public async Task Consume(ConsumeContext<SaleCreated> context)
         {
             var message = context.Message;
-            
+
             try
             {
                 await _stockService.ReserveStockAsync(message.ProductId, message.Quantity);
-            }
-            catch (Exception)
-            {
                 
-                throw;
-            };
+                await context.Publish(new StockReserved
+                (
+                    message.ProductId,
+                    message.Quantity,
+                    message.OrderId
+                ));
+            }
+            catch (Exception ex)
+            {
+
+                await context.Publish(new StockReservationFailed
+                (
+                    message.ProductId,
+                    message.Quantity,
+                    message.OrderId,
+                    ex.Message
+                ));
+            }
+            ;
         }
     }
 }

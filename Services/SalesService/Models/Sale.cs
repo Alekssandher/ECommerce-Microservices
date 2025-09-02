@@ -10,7 +10,7 @@ namespace SalesService.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; init; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
 
         public int CustomerId { get; set; } 
 

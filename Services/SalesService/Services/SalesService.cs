@@ -1,45 +1,52 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MassTransit;
 using SalesService.DTOs;
+using SalesService.Mappers;
+using SalesService.Repositories.Interfaces;
 using SalesService.Services.Interfaces;
+using Shared.Exceptions;
 
 namespace SalesService.Services
 {
     internal class SalesService : ISalesService
     {
-        private readonly IPublishEndpoint _publishEndpoint;
+        private readonly ISalesRepository _salesRepository;
 
-        public SalesService(IPublishEndpoint publishEndpoint)
+        public SalesService(ISalesRepository salesRepository)
         {
-            _publishEndpoint = publishEndpoint;
+            _salesRepository = salesRepository;
         }
-        
+
         public Task CancelSaleAsync(int saleId)
         {
             throw new NotImplementedException();
         }
 
-        public Task ConfirmSaleAsync(int saleId)
+        public async Task ConfirmSaleAsync(int saleId)
         {
-            throw new NotImplementedException();
+            var sale = await _salesRepository.GetByIdAsync(saleId)
+                ?? throw new Exceptions.NotFoundException($"Sale with ID: {saleId} Not Found.");
+
+            await _salesRepository.ConfirmSaleAsync(sale);
         }
 
-        public Task<SaleResponse> CreateSaleAsync(SaleRequest request)
+        public async Task CreateSaleAsync(SaleRequest request)
         {
-            throw new NotImplementedException();
+            await _salesRepository.CreateSaleAsync(request.ToSaleModel());
         }
 
-        public Task<List<SaleResponse>> GetAllSalesAsync()
+        public async Task<List<SaleResponse>> GetAllSalesAsync()
         {
-            throw new NotImplementedException();
+            var res = await _salesRepository.GetAllAsync();
+
+            return res.ToSaleResponseList();
         }
 
-        public Task<SaleResponse> GetSaleByIdAsync(int saleId)
+        public async Task<SaleResponse> GetSaleByIdAsync(int saleId)
         {
-            throw new NotImplementedException();
+            var res = await _salesRepository.GetByIdAsync(saleId)
+                ?? throw new Exceptions.NotFoundException($"Sale with ID: {saleId} Not Found.");
+
+            return res.ToSaleResponse();
         }
     }
 }
