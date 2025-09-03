@@ -41,7 +41,9 @@ namespace SalesService.Repositories
 
         public async Task<List<Sale>> GetAllAsync()
         {
-            return await _salesContext.Sales.ToListAsync();
+            return await _salesContext.Sales
+                .Include(s => s.Items)
+                .ToListAsync();
         }
 
         public async Task<Sale?> GetByIdAsync(int id)

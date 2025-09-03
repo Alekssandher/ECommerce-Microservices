@@ -9,7 +9,7 @@ namespace SalesService.DTOs
     {
         public int ProductId { get; set; }  
         public int Quantity { get; set; }  
-        public decimal Price { get; set; }  
-        public decimal Total => Quantity * Price;
+        public decimal UnitPrice { get; set; }  
+        public decimal TotalPrice => Math.Round(Quantity * UnitPrice, 2);
     }
 }

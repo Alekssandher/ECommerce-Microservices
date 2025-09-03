@@ -13,11 +13,12 @@ namespace SalesService.Services
     {
         private readonly ISalesRepository _salesRepository;
         private readonly IPublishEndpoint _publishEndpoint;
-
-        public SalesService(ISalesRepository salesRepository, IPublishEndpoint publishEndpoint)
+        private readonly ILogger<SalesService> _logger;
+        public SalesService(ISalesRepository salesRepository, IPublishEndpoint publishEndpoint, ILogger<SalesService> logger)
         {
             _salesRepository = salesRepository;
             _publishEndpoint = publishEndpoint;
+            _logger = logger;
         }
 
         public async Task CreateSaleAsync(SaleRequest request)
@@ -61,9 +62,9 @@ namespace SalesService.Services
                         Reason: $"Failed to publish sale creation event: {ex.Message}"
                     ));
 
-                    // Log do erro seria ideal aqui
-                    // _logger.LogError(ex, "Failed to publish SaleCreated event for Sale {SaleId}, Product {ProductId}", 
-                    //     sale.Id, item.ProductId);
+                   
+                    _logger.LogError(ex, $"Failed to publish SaleCreated event for Sale {sale.Id}, Customer {sale.CustomerId}", 
+                        sale.Id, item.ProductId);
                 }
             }
         }

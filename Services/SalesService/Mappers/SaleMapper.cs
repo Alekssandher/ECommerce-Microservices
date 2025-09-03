@@ -30,15 +30,21 @@ namespace SalesService.Mappers
                 CustomerId = sale.CustomerId,
                 Status = sale.Status,
                 CreatedAt = sale.CreatedAt,
-                Items = sale.Items?.Select(i => new ItemResponse
-                {
-                    ProductId = i.ProductId,
-                    Quantity = i.Quantity,
-                    Price = i.Price
-                }).ToList() ?? []
+                Items = sale.Items.ToResponseList()
             };
         }
 
+        private static List<ItemResponse> ToResponseList(this List<SaleItem> saleItems)
+        {
+            if (saleItems.Count <= 0)
+                return [];
+            
+            return [.. saleItems.Select(item => new ItemResponse{
+                ProductId = item.ProductId,
+                Quantity = item.Quantity,
+                UnitPrice = Math.Round(item.Price, 2)
+            })];
+        }
         public static List<SaleResponse> ToSaleResponseList(this List<Sale> sales)
         {
             if (sales.Count <= 0)
