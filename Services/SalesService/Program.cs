@@ -1,5 +1,6 @@
 using Shared.Extensions;
 using SalesService.Extensions;
+using Shared.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +15,15 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.MapOpenApi()
+        .CacheOutput();
+    app.MapHealthChecks("/health");
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<GlobalExceptionHandler>();
+
 app.MapControllers();
 
 app.Run();

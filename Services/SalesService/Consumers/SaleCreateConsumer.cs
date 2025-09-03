@@ -8,36 +8,27 @@ namespace SalesService.Consumers
 {
     internal class SaleCreateConsumer : IConsumer<SaleRequest>
     {
-        private readonly IPublishEndpoint _publishEndpoint;
         private readonly ISalesService _salesService;
 
-        public SaleCreateConsumer(IPublishEndpoint publishEndpoint, ISalesService salesService)
+        public SaleCreateConsumer(ISalesService salesService)
         {
-            _publishEndpoint = publishEndpoint;
             _salesService = salesService;
         }
 
         public async Task Consume(ConsumeContext<SaleRequest> context)
         {
+            var request = context.Message;
             
-            // var message = context.Message;
-
-            // try
-            // {
-            //     await _publishEndpoint.Publish(new SaleConfirmed(message.CustomerId, message.ProductId, message.Quantity));
-            // }
-            // catch (Exception ex)
-            // {
-            //     await _publishEndpoint.Publish(new SaleCreationFailed(
-            //         message.CustomerId,
-            //         message.ProductId,
-            //         message.Quantity,
-            //         ex.Message
-            //         )
-            //     );
-
-            // }
-
+            try
+            {
+                await _salesService.CreateSaleAsync(request);
+                
+                await context.RespondAsync(new { Success = true, Message = "Sale created successfully" });
+            }
+            catch (Exception ex)
+            {
+                await context.RespondAsync(new { Success = false, Error = ex.Message });
+            }
         }
     }
 }

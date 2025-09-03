@@ -13,10 +13,59 @@ namespace SalesService.Services
     {
         private readonly ISalesRepository _salesRepository;
         private readonly IPublishEndpoint _publishEndpoint;
+
         public SalesService(ISalesRepository salesRepository, IPublishEndpoint publishEndpoint)
         {
             _salesRepository = salesRepository;
             _publishEndpoint = publishEndpoint;
+        }
+
+        public async Task CreateSaleAsync(SaleRequest request)
+        {
+            if (request.CustomerId <= 0)
+                throw new Exceptions.BadRequestException("Customer ID must be greater than zero");
+
+            if (!request.Items.Any())
+                throw new Exceptions.BadRequestException("Sale must contain at least one item");
+
+            foreach (var item in request.Items)
+            {
+                if (item.ProductId <= 0)
+                    throw new Exceptions.BadRequestException($"Invalid Product ID: {item.ProductId}");
+                
+                if (item.Quantity <= 0)
+                    throw new Exceptions.BadRequestException($"Quantity must be greater than zero for Product ID: {item.ProductId}");
+                
+                if (item.Price <= 0)
+                    throw new Exceptions.BadRequestException($"Price must be greater than zero for Product ID: {item.ProductId}");
+            }
+
+            var sale = await _salesRepository.CreateSaleAsync(request.ToSaleModel());
+
+            foreach (var item in sale.Items)
+            {
+                try
+                {
+                    await _publishEndpoint.Publish(new SaleCreated(
+                        OrderId: sale.Id,
+                        ProductId: item.ProductId,
+                        Quantity: item.Quantity
+                    ));
+                }
+                catch (Exception ex)
+                {
+                    await _publishEndpoint.Publish(new SaleCreationFailed(
+                        CustomerId: sale.CustomerId,
+                        ProductId: item.ProductId,
+                        Quantity: item.Quantity,
+                        Reason: $"Failed to publish sale creation event: {ex.Message}"
+                    ));
+
+                    // Log do erro seria ideal aqui
+                    // _logger.LogError(ex, "Failed to publish SaleCreated event for Sale {SaleId}, Product {ProductId}", 
+                    //     sale.Id, item.ProductId);
+                }
+            }
         }
 
         public Task CancelSaleAsync(int saleId)
@@ -32,42 +81,18 @@ namespace SalesService.Services
             await _salesRepository.ConfirmSaleAsync(sale);
         }
 
-        public async Task CreateSaleAsync(SaleRequest request)
-        {
-            var sale = await _salesRepository.CreateSaleAsync(request.ToSaleModel());
-            
-            try
-            {
-                await _publishEndpoint.Publish(new SaleConfirmed(
-                    CustomerId: sale.CustomerId,
-                    StockItemId: sale.Items.First().ProductId, 
-                    Quantity: sale.Items.First().Quantity
-                ));
-            }
-            catch (Exception ex)
-            {
-                await _publishEndpoint.Publish(new SaleCreationFailed(
-                    CustomerId: sale.CustomerId,
-                    ProductId: sale.Items.First().ProductId,
-                    Quantity: sale.Items.First().Quantity,
-                    Reason: ex.Message
-                ));
-            }
-        }
-
         public async Task<List<SaleResponse>> GetAllSalesAsync()
         {
-            var res = await _salesRepository.GetAllAsync();
-
-            return res.ToSaleResponseList();
+            var sales = await _salesRepository.GetAllAsync();
+            return sales.ToSaleResponseList();
         }
 
         public async Task<SaleResponse> GetSaleByIdAsync(int saleId)
         {
-            var res = await _salesRepository.GetByIdAsync(saleId)
+            var sale = await _salesRepository.GetByIdAsync(saleId)
                 ?? throw new Exceptions.NotFoundException($"Sale with ID: {saleId} Not Found.");
 
-            return res.ToSaleResponse();
+            return sale.ToSaleResponse();
         }
     }
 }

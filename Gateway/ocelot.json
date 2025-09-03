@@ -10,32 +10,85 @@
     },
     "Routes": [
         {
-            "UpstreamPathTemplate": "",
-            "UpstreamHttpMethod": [ "" ],
-            "DownStreamPathTemplate": "",
-            "DownStreamScheme": "https",
-            "DownStreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 5002
-                }
-            ]
-            ,
-            "FileCacheOptions": {
-                "TtlSeconds": 10
-            }
+        "DownstreamPathTemplate": "/api/Sales",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+            { "Host": "localhost", "Port": 5002 }
+        ],
+        "UpstreamPathTemplate": "/sales",
+        "UpstreamHttpMethod": [ "GET", "POST" ]
         },
         {
-            "UpstreamPathTemplate": "",
-            "UpstreamHttpMethod": [ "" ],
-            "DownStreamPathTemplate": "",
-            "DownStreamScheme": "https",
-            "DownStreamHostAndPorts": [
-                {
-                    "Host": "localhost",
-                    "Port": 5003
-                }
-            ]
+        "DownstreamPathTemplate": "/api/Sales/{id}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+            { "Host": "localhost", "Port": 5002 }
+        ],
+        "UpstreamPathTemplate": "/sales/{id}",
+        "UpstreamHttpMethod": [ "GET", "PATCH", "DELETE" ]
+        },
+        {
+        "DownstreamPathTemplate": "/api/Product",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+            { "Host": "localhost", "Port": 5003 }
+        ],
+        "UpstreamPathTemplate": "/products",
+        "UpstreamHttpMethod": [ "GET", "POST", "PUT" ]
+        },
+        {
+        "DownstreamPathTemplate": "/api/Product/{productId}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+            { "Host": "localhost", "Port": 5003 }
+        ],
+        "UpstreamPathTemplate": "/products/{productId}",
+        "UpstreamHttpMethod": [ "GET" ]
+        },
+        {
+        "DownstreamPathTemplate": "/api/Product/{productId}/{quantity}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+            { "Host": "localhost", "Port": 5003 }
+        ],
+        "UpstreamPathTemplate": "/products/{productId}/{quantity}",
+        "UpstreamHttpMethod": [ "DELETE" ]
+        },
+        {
+        "DownstreamPathTemplate": "/api/Stock/{productId}/available",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+            { "Host": "localhost", "Port": 5003 }
+        ],
+        "UpstreamPathTemplate": "/stock/{productId}/available",
+        "UpstreamHttpMethod": [ "GET" ]
+        },
+        {
+        "DownstreamPathTemplate": "/api/Stock/{productId}/reserve/{quantity}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+            { "Host": "localhost", "Port": 5003 }
+        ],
+        "UpstreamPathTemplate": "/stock/{productId}/reserve/{quantity}",
+        "UpstreamHttpMethod": [ "POST" ]
+        },
+        {
+        "DownstreamPathTemplate": "/api/Stock/{productId}/release/{quantity}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+            { "Host": "localhost", "Port": 5003 }
+        ],
+        "UpstreamPathTemplate": "/stock/{productId}/release/{quantity}",
+        "UpstreamHttpMethod": [ "POST" ]
+        },
+        {
+        "DownstreamPathTemplate": "/api/Stock/{productId}/remove/{quantity}",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [
+            { "Host": "localhost", "Port": 5003 }
+        ],
+        "UpstreamPathTemplate": "/stock/{productId}/remove/{quantity}",
+        "UpstreamHttpMethod": [ "DELETE" ]
         }
     ]
 }

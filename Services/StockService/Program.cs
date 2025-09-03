@@ -1,4 +1,5 @@
 using Shared.Extensions;
+using Shared.Middlewares;
 using StockService.Consumers;
 using StockService.Extensions;
 
@@ -25,6 +26,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<GlobalExceptionHandler>();
+
 app.MapControllers();
 
 app.Run();

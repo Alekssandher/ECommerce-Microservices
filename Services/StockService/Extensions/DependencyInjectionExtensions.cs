@@ -10,7 +10,8 @@ namespace StockService.Extensions
     {
         public static void RegisterDependencies(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("mysql");
+            var connectionString = configuration.GetConnectionString("mysql")
+                ?? throw new Exception("MySql connection string is missing.");
 
             // Database
             services.AddDbContext<StockContext>(
