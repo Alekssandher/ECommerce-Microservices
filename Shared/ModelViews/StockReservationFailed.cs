@@ -9,7 +9,6 @@ namespace Shared.ModelViews
     (
         int ProductId,
         int Quantity,
-        int SaleId,
         string Reason
     );
 }

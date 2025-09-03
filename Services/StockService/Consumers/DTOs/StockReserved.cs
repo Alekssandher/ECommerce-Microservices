@@ -5,5 +5,5 @@ using System.Threading.Tasks;
 
 namespace StockService.Consumers.DTOs
 {
-    internal record StockReserved(int ProductId, int Quantity, int SaleId);
+    internal record StockReserved(int SaleId, int ProductId, int Quantity);
 }

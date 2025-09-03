@@ -39,6 +39,12 @@ namespace SalesService.Repositories
             return res.Entity;
         }
 
+        public async Task DeleteSaleAsync(Sale sale)
+        {
+            _salesContext.Sales.Remove(sale);
+            await _salesContext.SaveChangesAsync();
+        }
+
         public async Task<List<Sale>> GetAllAsync()
         {
             return await _salesContext.Sales

@@ -31,9 +31,10 @@ namespace StockService.Consumers
                 
                 await context.Publish(new StockReserved
                 (
+                    message.SaleId,
                     message.ProductId,
-                    message.Quantity,
-                    message.OrderId
+                    message.Quantity
+                   
                 ));
             }
             catch (Exception ex)
@@ -43,7 +44,6 @@ namespace StockService.Consumers
                 (
                     message.ProductId,
                     message.Quantity,
-                    message.OrderId,
                     ex.Message
                 ));
             }

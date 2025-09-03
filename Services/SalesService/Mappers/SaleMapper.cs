@@ -28,7 +28,7 @@ namespace SalesService.Mappers
             {
                 Id = sale.Id,
                 CustomerId = sale.CustomerId,
-                Status = sale.Status,
+                Status = sale.Status.ToString(),
                 CreatedAt = sale.CreatedAt,
                 Items = sale.Items.ToResponseList()
             };

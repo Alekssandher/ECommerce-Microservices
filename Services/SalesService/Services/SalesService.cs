@@ -33,22 +33,22 @@ namespace SalesService.Services
             {
                 if (item.ProductId <= 0)
                     throw new Exceptions.BadRequestException($"Invalid Product ID: {item.ProductId}");
-                
+
                 if (item.Quantity <= 0)
                     throw new Exceptions.BadRequestException($"Quantity must be greater than zero for Product ID: {item.ProductId}");
-                
+
                 if (item.Price <= 0)
                     throw new Exceptions.BadRequestException($"Price must be greater than zero for Product ID: {item.ProductId}");
             }
 
             var sale = await _salesRepository.CreateSaleAsync(request.ToSaleModel());
 
-            foreach (var item in sale.Items)
+            foreach (var item in request.Items)
             {
                 try
                 {
                     await _publishEndpoint.Publish(new SaleCreated(
-                        OrderId: sale.Id,
+                        SaleId: sale.Id,
                         ProductId: item.ProductId,
                         Quantity: item.Quantity
                     ));
@@ -56,22 +56,26 @@ namespace SalesService.Services
                 catch (Exception ex)
                 {
                     await _publishEndpoint.Publish(new SaleCreationFailed(
-                        CustomerId: sale.CustomerId,
+                        CustomerId: request.CustomerId,
                         ProductId: item.ProductId,
                         Quantity: item.Quantity,
                         Reason: $"Failed to publish sale creation event: {ex.Message}"
                     ));
 
-                   
-                    _logger.LogError(ex, $"Failed to publish SaleCreated event for Sale {sale.Id}, Customer {sale.CustomerId}", 
-                        sale.Id, item.ProductId);
+
+                    _logger.LogError($"Failed to publish SaleCreated event for Item {item.ProductId}, Customer {request.CustomerId}\nEx: {ex}");
                 }
             }
+
+            
         }
 
-        public Task CancelSaleAsync(int saleId)
+        public async Task CancelSaleAsync(int saleId)
         {
-            throw new NotImplementedException();
+            var sale = await _salesRepository.GetByIdAsync(saleId)
+                ?? throw new Exceptions.NotFoundException($"Sale with ID: {saleId} Not Found.");
+
+            await _salesRepository.DeleteSaleAsync(sale);
         }
 
         public async Task ConfirmSaleAsync(int saleId)
@@ -80,6 +84,18 @@ namespace SalesService.Services
                 ?? throw new Exceptions.NotFoundException($"Sale with ID: {saleId} Not Found.");
 
             await _salesRepository.ConfirmSaleAsync(sale);
+
+            foreach (var item in sale.Items)
+            {
+                
+                await _publishEndpoint.Publish(new SaleConfirmed(
+                    item.ProductId,
+                    item.Quantity
+                ));
+                    
+            }
+
+            
         }
 
         public async Task<List<SaleResponse>> GetAllSalesAsync()

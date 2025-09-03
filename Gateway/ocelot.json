@@ -28,7 +28,7 @@
         "UpstreamHttpMethod": [ "GET", "PATCH", "DELETE" ]
         },
         {
-        "DownstreamPathTemplate": "/api/Product",
+        "DownstreamPathTemplate": "/api/Products",
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
             { "Host": "localhost", "Port": 5003 }
@@ -37,7 +37,7 @@
         "UpstreamHttpMethod": [ "GET", "POST", "PUT" ]
         },
         {
-        "DownstreamPathTemplate": "/api/Product/{productId}",
+        "DownstreamPathTemplate": "/api/Products/{productId}",
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
             { "Host": "localhost", "Port": 5003 }
@@ -46,7 +46,7 @@
         "UpstreamHttpMethod": [ "GET" ]
         },
         {
-        "DownstreamPathTemplate": "/api/Product/{productId}/{quantity}",
+        "DownstreamPathTemplate": "/api/Products/{productId}/{quantity}",
         "DownstreamScheme": "http",
         "DownstreamHostAndPorts": [
             { "Host": "localhost", "Port": 5003 }
