@@ -65,5 +65,14 @@ namespace SalesService.Repositories
         {
             return await _salesContext.Sales.FirstOrDefaultAsync(s => s.Id == id);
         }
+
+        public async Task CancelSaleAsync(int saleId)
+        {
+            _ = await _salesContext.Sales
+                .Where(s => s.Id == saleId)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(p => p.Status, SaleStatus.Canceled)
+                ); 
+        }
     }
 }

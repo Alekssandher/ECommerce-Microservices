@@ -60,6 +60,7 @@ namespace StockService.Consumers
                     };
                 })
             );
+            
             await _publishEndpoint.Publish(new SaleItemsReservedResponse
             {
                 SaleId = message.SaleId,
@@ -68,7 +69,7 @@ namespace StockService.Consumers
                 {
                     ProductId = i.ProductId,
                     Quantity = i.Quantity,
-                    Price = i.Price, 
+                    Price = i.Price,
                     SaleId = i.SaleId
                 })]
             });

@@ -4,6 +4,7 @@ using SalesService.Mappers;
 using SalesService.Models;
 using SalesService.Repositories.Interfaces;
 using SalesService.Services.Interfaces;
+using Shared.DTOs;
 using Shared.Exceptions;
 using Shared.Messages;
 using Shared.ModelViews;
@@ -55,13 +56,37 @@ namespace SalesService.Services
             var sale = await _salesRepository.GetByIdAsync(saleId)
                 ?? throw new Exceptions.NotFoundException($"Sale with ID: {saleId} Not Found.");
 
-            await _salesRepository.DeleteSaleAsync(sale);
+            if (sale.Status != SaleStatus.Pending)
+            {
+                throw new Exceptions.BadRequestException("You Can Only Cancel Pending Sales");
+            }
+
+            await _publishEndpoint.Publish(new StockCanceled());
+
+            foreach (var item in sale.Items)
+            {
+
+                await _publishEndpoint.Publish(new SaleCanceled
+                {
+                    StockItemId = item.ProductId,
+                    Quantity = item.Quantity
+                });
+
+            }
+
+            await _salesRepository.CancelSaleAsync(sale.Id);
+
         }
 
         public async Task ConfirmSaleAsync(int saleId)
         {
             var sale = await _salesRepository.GetByIdAsync(saleId)
                 ?? throw new Exceptions.NotFoundException($"Sale with ID: {saleId} Not Found.");
+
+            if (sale.Status != SaleStatus.Pending)
+            {
+                throw new Exceptions.BadRequestException("You Can Only Confirm Pending Sales");
+            }
 
             await _salesRepository.ConfirmSaleAsync(sale);
 
