@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Shared.Exceptions;
+using StockService.Dtos;
 using StockService.Models;
 using StockService.Repositories;
 
@@ -66,12 +67,17 @@ namespace StockService.Services
             await _stockRepository.RemoveReservedStockAsync(stockItem, quantity);
         }
 
-        public async Task<StockItem> GetStockItemAsync(int stockId)
+        public async Task<StockResponse> GetStockByIdAsync(int stockId)
         {
             var stockItem = await _stockRepository.GetStockItemByProductIdAsync(stockId)
                 ?? throw new Exceptions.NotFoundException("There's no item with this ID");
 
-            return stockItem;
+            return new StockResponse
+            {
+                ProductId = stockItem.ProductId,
+                QuantityAvailable = stockItem.QuantityAvailable,
+                QuantityReserved = stockItem.QuantityReserved
+            };
 
         }
     }

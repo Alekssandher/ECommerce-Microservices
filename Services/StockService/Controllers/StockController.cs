@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Shared.ModelViews;
+using StockService.Dtos;
 using StockService.Services;
 
 namespace StockService.Controllers
@@ -23,6 +24,13 @@ namespace StockService.Controllers
             _stockService = stockService;
         }
 
+        [HttpGet("{productId}")]
+        public async Task<IActionResult> GetStockById([FromRoute] int productId)
+        {
+            var stock = await _stockService.GetStockByIdAsync(productId);
+
+            return Ok(new OkResponse<StockResponse>(string.Empty, string.Empty, stock));
+        }   
         [HttpGet("{productId}/available")]
         public async Task<IActionResult> GetAvailableStock([FromRoute] int productId)
         {
