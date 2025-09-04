@@ -16,12 +16,14 @@ namespace StockService.Consumers
     public class SaleCreatedConsumer : IConsumer<SaleCreated>
     {
         private readonly IStockManagementService _stockService;
+        private readonly IProductService _productService;
         private readonly IPublishEndpoint _publishEndpoint;
 
-        public SaleCreatedConsumer(IStockManagementService stockService, IPublishEndpoint publishEndpoint)
+        public SaleCreatedConsumer(IStockManagementService stockService, IPublishEndpoint publishEndpoint, IProductService productService)
         {
             _stockService = stockService;
             _publishEndpoint = publishEndpoint;
+            _productService = productService;
          
         }
 
@@ -44,10 +46,32 @@ namespace StockService.Consumers
                 Console.WriteLine("Reached SaleCreation");
                 return;
             }
-
-            await _publishEndpoint.Publish(
-                message.ToReservedResponse()
+            
+            var itemsWithPrices = await Task.WhenAll(
+                message.Items.Select(async i =>
+                {
+                    var price = await _productService.GetProductPriceByIdAsync(i.ProductId); 
+                    return new
+                    {
+                        i.ProductId,
+                        i.Quantity,
+                        i.SaleId,
+                        Price = price
+                    };
+                })
             );
+            await _publishEndpoint.Publish(new SaleItemsReservedResponse
+            {
+                SaleId = message.SaleId,
+                CustomerId = message.CustomerId,
+                ItemsReserved = [.. itemsWithPrices.Select(i => new ItemReserved
+                {
+                    ProductId = i.ProductId,
+                    Quantity = i.Quantity,
+                    Price = i.Price, 
+                    SaleId = i.SaleId
+                })]
+            });
             
         }
     }

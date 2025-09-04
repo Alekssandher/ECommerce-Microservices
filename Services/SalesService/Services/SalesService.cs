@@ -21,9 +21,9 @@ namespace SalesService.Services
             _logger = logger;
         }
 
-        public async Task CreateSaleAsync(SaleRequest request)
+        public async Task CreateSaleAsync(SaleItemsReservedResponse request)
         {
-            _ = await _salesRepository.CreateSaleAsync(request.ToSaleModel());
+            _ = await _salesRepository.CreateSaleAsync(request.ToModel());
         }
 
         public async Task SendSaleAsync(SaleRequest request)
@@ -41,37 +41,10 @@ namespace SalesService.Services
 
             }
 
-            // await _publishEndpoint.Publish(request.ToSaleCreated());
-
-            var sale = await _salesRepository.CreateSaleAsync(request.ToSaleModel());
+            var sale = request.ToSaleModel();
 
             await _publishEndpoint.Publish(sale.ToSaleCreated());
             
-            // foreach (var item in request.Items)
-            // {
-            //     try
-            //     {
-            //         await _publishEndpoint.Publish(new SaleCreated(
-            //             SaleId: sale.Id,
-            //             ProductId: item.ProductId,
-            //             Quantity: item.Quantity
-            //         ));
-            //     }
-            //     catch (Exception ex)
-            //     {
-            //         await _publishEndpoint.Publish(new SaleCreationFailed(
-            //             CustomerId: request.CustomerId,
-            //             ProductId: item.ProductId,
-            //             Quantity: item.Quantity,
-            //             Reason: $"Failed to publish sale creation event: {ex.Message}"
-            //         ));
-
-
-            //         _logger.LogError($"Failed to publish SaleCreated event for Item {item.ProductId}, Customer {request.CustomerId}\nEx: {ex}");
-            //     }
-            // }
-
-
         }
 
         public async Task CancelSaleAsync(int saleId)
@@ -121,5 +94,6 @@ namespace SalesService.Services
 
             await _salesRepository.UnauthorizeSale(sale);
         }
+
     }
 }

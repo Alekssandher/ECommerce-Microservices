@@ -20,7 +20,6 @@ namespace StockService.Services
             await _productRepository.CreateProductAsync(product, request.InitialQuantity);
         }
 
-
         public async Task<List<ProductResponse>> GetAllProductsAsync()
         {
             var products = await _productRepository.GetAllProductsAsync();
@@ -35,12 +34,16 @@ namespace StockService.Services
             return product.ToProductResponse();
         }
 
+        public async Task<decimal> GetProductPriceByIdAsync(int productId)
+        {
+            return await _productRepository.GetProductPriceByIdAsync(productId);
+        }
         public async Task UpdateProductAsync(UpdateProductRequest request)
         {
-            if (request.ProductId <= 0) 
+            if (request.ProductId <= 0)
                 throw new Exceptions.BadRequestException("Product ID must be greater than zero");
 
-            var product = await _productRepository.GetProductByIdAsync(request.ProductId) 
+            var product = await _productRepository.GetProductByIdAsync(request.ProductId)
                 ?? throw new Exceptions.NotFoundException("Product not found");
 
             if (request.Name != null) product.Name = request.Name;

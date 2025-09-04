@@ -18,9 +18,10 @@ namespace SalesService.Consumers
 
         public async Task Consume(ConsumeContext<SaleItemsReservedResponse> context)
         {
-            var message = context.Message;
+            SaleItemsReservedResponse message = context.Message;
 
-            await _salesService.ConfirmSaleAsync(message.SaleId);
+            
+            await _salesService.CreateSaleAsync(message);
         }
     }
 }

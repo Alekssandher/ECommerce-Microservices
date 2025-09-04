@@ -85,6 +85,20 @@ namespace SalesService.Mappers
             }).ToList()];
         }
 
+        public static Sale ToModel(this SaleItemsReservedResponse reserved)
+        {
+            return new Sale
+            {
+                CustomerId = reserved.CustomerId,
+                CreatedAt = DateTime.UtcNow,
+                Items = [.. reserved.ItemsReserved.Select( i => new SaleItem {
+                    SaleId = i.SaleId,
+                    Quantity = i.Quantity,
+                    Price = i.Price,
+                    ProductId = i.ProductId
+                })]
+            };
+        }
         public static SaleRequest ToRequest(this SaleItemsReservedResponse reserved)
         {
             return new SaleRequest

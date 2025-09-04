@@ -75,5 +75,15 @@ namespace StockService.Repositories
                     .SetProperty(p => p.Price, product.Price)
                 );
         }
+
+        public async Task<decimal> GetProductPriceByIdAsync(int productId)
+        {
+            var price = await _context.Products
+                              .Where(p => p.Id == productId)
+                              .Select(p => p.Price)
+                              .FirstOrDefaultAsync();
+
+            return price;
+        }
     }
 }
