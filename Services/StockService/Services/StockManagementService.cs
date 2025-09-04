@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MassTransit;
 using Shared.Exceptions;
 using StockService.Dtos;
 using StockService.Models;
@@ -13,11 +14,13 @@ namespace StockService.Services
     {
         private readonly IStockRepository _stockRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public StockManagementService(IStockRepository stockRepository, IProductRepository productRepository)
+        public StockManagementService(IStockRepository stockRepository, IProductRepository productRepository, IPublishEndpoint publishEndpoint)
         {
             _stockRepository = stockRepository;
             _productRepository = productRepository;
+            _publishEndpoint = publishEndpoint;
         }
 
         public async Task<int> GetAvailableStockAsync(int productId)
@@ -42,7 +45,9 @@ namespace StockService.Services
 
         public async Task ReserveStockItemsAsync(List<(int productId, int quantity)> items)
         {
+          
             await _stockRepository.ReserveStockItemsAsync(items);
+             
         }
 
         public async Task ReleaseStockAsync(int productId, int quantity)

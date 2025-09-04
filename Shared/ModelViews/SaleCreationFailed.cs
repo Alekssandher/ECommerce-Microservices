@@ -8,8 +8,7 @@ namespace Shared.ModelViews
     public record SaleCreationFailed
     (
         int CustomerId,
-        int ProductId,
-        int Quantity,
+        int SaleId,
         string Reason
     );
 }

@@ -1,5 +1,5 @@
 
 namespace Shared.Messages
 {
-    public record SaleCreated(int CustomerId, List<ItemReserved> Items) ;
+    public record SaleCreated(int SaleId, int CustomerId, List<ItemReserved> Items) ;
 }

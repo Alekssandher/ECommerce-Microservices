@@ -34,7 +34,16 @@ namespace StockService.Consumers
                 .ToList();
 
 
-            await _stockService.ReserveStockItemsAsync(items);
+            try
+            {
+                await _stockService.ReserveStockItemsAsync(items);
+            }
+            catch (Exception ex)
+            {
+                await _publishEndpoint.Publish(new SaleCreationFailed(message.CustomerId, message.SaleId, ex.Message));
+                Console.WriteLine("Reached SaleCreation");
+                return;
+            }
 
             await _publishEndpoint.Publish(
                 message.ToReservedResponse()

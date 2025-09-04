@@ -60,7 +60,7 @@ namespace StockService.Repositories
 
             var missingProducts = productIds.Except(stockItems.Select(s => s.ProductId)).ToList();
             
-            if (missingProducts.Count <= 0)
+            if (missingProducts.Count != 0)
                 throw new Exceptions.NotFoundException($"Products not found: {string.Join(", ", missingProducts)}");
 
             await using var transaction = await _context.Database.BeginTransactionAsync();
@@ -69,7 +69,8 @@ namespace StockService.Repositories
             {
                 foreach (var (productId, quantity) in items)
                 {
-                    var stockItem = stockItems.First(s => s.ProductId == productId);
+                    var stockItem = stockItems.FirstOrDefault(s => s.ProductId == productId)
+                        ?? throw new Exceptions.NotFoundException($"Not Found Product With Id: {productId}");
 
                     if (stockItem.QuantityAvailable < quantity)
                         throw new Exceptions.BadRequestException($"Not enough stock for Product {productId}");

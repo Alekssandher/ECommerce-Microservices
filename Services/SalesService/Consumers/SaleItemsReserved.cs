@@ -20,7 +20,7 @@ namespace SalesService.Consumers
         {
             var message = context.Message;
 
-            await _salesService.CreateSaleAsync(message.ToRequest());
+            await _salesService.ConfirmSaleAsync(message.SaleId);
         }
     }
 }

@@ -31,6 +31,15 @@ namespace SalesService.Repositories
 
         }
 
+        public async Task UnauthorizeSale(Sale sale)
+        {
+            _ = await _salesContext.Sales
+                .Where(s => s.Id == sale.Id)
+                .ExecuteUpdateAsync(setters => setters
+                    .SetProperty(p => p.Status, SaleStatus.NotAllowed)
+                ); 
+        }
+
         public async Task<Sale> CreateSaleAsync(Sale sale)
         {
             var res = await _salesContext.Sales.AddAsync(sale);

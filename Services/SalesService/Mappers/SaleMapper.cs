@@ -16,7 +16,6 @@ namespace SalesService.Mappers
             return new Sale
             {
                 CustomerId = saleRequest.CustomerId,
-                Status = SaleStatus.Pending,
                 CreatedAt = DateTime.UtcNow,
                 Items = ToModelList(saleRequest.Items)
 
@@ -61,21 +60,20 @@ namespace SalesService.Mappers
             return [.. items.Select(item => new SaleItem
             {
                 ProductId = item.ProductId,
-                SaleId = item.SaleId,
-                Quantity = item.Quantity,
-                Price = item.Price
+                Quantity = item.Quantity
             } )];
         }
-        public static SaleCreated ToSaleCreated(this SaleRequest request)
+        public static SaleCreated ToSaleCreated(this Sale sale)
         {
             return new SaleCreated(
-                request.CustomerId,
-                request.Items.ToItemsReserved()
+                sale.Id,
+                sale.CustomerId,
+                sale.Items.ToItemsReserved()
             );
         }
 
 
-        private static List<ItemReserved> ToItemsReserved(this List<ItemRequest> Items)
+        private static List<ItemReserved> ToItemsReserved(this List<SaleItem> Items)
         {
             if (Items.Count <= 0)
                 return [];
@@ -94,7 +92,6 @@ namespace SalesService.Mappers
                 CustomerId = reserved.CustomerId,
                 Items = reserved.ItemsReserved?.Select(i => new ItemRequest
                 {
-                    SaleId = i.SaleId,
                     ProductId = i.ProductId,
                     Quantity = i.Quantity
                 }).ToList() ?? new List<ItemRequest>()

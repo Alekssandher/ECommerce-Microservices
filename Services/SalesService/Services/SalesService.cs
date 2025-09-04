@@ -39,19 +39,14 @@ namespace SalesService.Services
                 if (item.ProductId <= 0)
                     throw new Exceptions.BadRequestException($"Invalid Product ID: {item.ProductId}");
 
-                if (item.Quantity <= 0)
-                    throw new Exceptions.BadRequestException($"Quantity must be greater than zero for Product ID: {item.ProductId}");
-
-                if (item.Price <= 0)
-                    throw new Exceptions.BadRequestException($"Price must be greater than zero for Product ID: {item.ProductId}");
             }
 
-            await _publishEndpoint.Publish(request.ToSaleCreated());
+            // await _publishEndpoint.Publish(request.ToSaleCreated());
 
+            var sale = await _salesRepository.CreateSaleAsync(request.ToSaleModel());
 
-
-            // var sale = await _salesRepository.CreateSaleAsync(request.ToSaleModel());
-
+            await _publishEndpoint.Publish(sale.ToSaleCreated());
+            
             // foreach (var item in request.Items)
             // {
             //     try
@@ -102,9 +97,7 @@ namespace SalesService.Services
                     item.Quantity
                 ));
                     
-            }
-
-            
+            }         
         }
 
         public async Task<List<SaleResponse>> GetAllSalesAsync()
@@ -119,6 +112,14 @@ namespace SalesService.Services
                 ?? throw new Exceptions.NotFoundException($"Sale with ID: {saleId} Not Found.");
 
             return sale.ToSaleResponse();
+        }
+
+        public async Task UnauthorizeSale(int saleId)
+        {
+            var sale = await _salesRepository.GetByIdAsync(saleId)
+                ?? throw new Exceptions.NotFoundException($"Sale with ID: {saleId} Not Found.");
+
+            await _salesRepository.UnauthorizeSale(sale);
         }
     }
 }

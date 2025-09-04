@@ -12,6 +12,7 @@ namespace Shared.Mappers
         {
             return new SaleItemsReservedResponse
             {
+                SaleId = request.SaleId,
                 CustomerId = request.CustomerId,
                 ItemsReserved = request.Items
             };
