@@ -63,7 +63,7 @@ namespace SalesService.Repositories
 
         public async Task<Sale?> GetByIdAsync(int id)
         {
-            return await _salesContext.Sales.FirstOrDefaultAsync(s => s.Id == id);
+            return await _salesContext.Sales.Include(s => s.Items).FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public async Task CancelSaleAsync(int saleId)
