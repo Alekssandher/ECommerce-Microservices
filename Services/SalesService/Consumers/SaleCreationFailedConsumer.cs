@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MassTransit;
 using SalesService.Services.Interfaces;
+using Shared.Messages;
 using Shared.ModelViews;
 
 namespace SalesService.Consumers
@@ -22,7 +23,14 @@ namespace SalesService.Consumers
             var message = context.Message;
             Console.WriteLine("Reached SaleFailed");
 
-            await _salesService.UnauthorizeSale(message.SaleId);
+            var saleId = await _salesService.CreateSaleAsync(new SaleItemsReservedResponse
+            {
+                SaleId = message.SaleId,
+                CustomerId = message.CustomerId,
+                ItemsReserved = []
+            });
+
+            await _salesService.UnauthorizeSale(saleId);
         }
     }
 }

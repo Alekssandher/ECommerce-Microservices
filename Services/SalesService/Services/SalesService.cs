@@ -1,6 +1,7 @@
 using MassTransit;
 using SalesService.DTOs;
 using SalesService.Mappers;
+using SalesService.Models;
 using SalesService.Repositories.Interfaces;
 using SalesService.Services.Interfaces;
 using Shared.Exceptions;
@@ -21,9 +22,11 @@ namespace SalesService.Services
             _logger = logger;
         }
 
-        public async Task CreateSaleAsync(SaleItemsReservedResponse request)
+        public async Task<int> CreateSaleAsync(SaleItemsReservedResponse request)
         {
-            _ = await _salesRepository.CreateSaleAsync(request.ToModel());
+            var sale = await _salesRepository.CreateSaleAsync(request.ToModel());
+
+            return sale.Id;
         }
 
         public async Task SendSaleAsync(SaleRequest request)

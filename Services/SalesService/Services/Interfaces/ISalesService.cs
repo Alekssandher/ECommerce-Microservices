@@ -1,11 +1,12 @@
 using SalesService.DTOs;
+using SalesService.Models;
 using Shared.Messages;
 
 namespace SalesService.Services.Interfaces
 {
     public interface ISalesService
     {
-        Task CreateSaleAsync(SaleItemsReservedResponse request);
+        Task<int> CreateSaleAsync(SaleItemsReservedResponse request);
         Task UnauthorizeSale(int saleId);
         Task SendSaleAsync(SaleRequest request);
         Task<SaleResponse> GetSaleByIdAsync(int saleId);
