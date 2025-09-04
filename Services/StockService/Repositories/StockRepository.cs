@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Shared.Exceptions;
 using StockService.Infraestructure.Data;
 using StockService.Models;
 
@@ -46,6 +47,47 @@ namespace StockService.Repositories
             stockItem.QuantityAvailable -= quantity;  
             stockItem.QuantityReserved += quantity;  
             await _context.SaveChangesAsync();
+        }
+
+        public async Task ReserveStockItemsAsync(List<(int productId, int quantity)> items)
+        {
+            var productIds = items.Select(i => i.productId).ToList();
+
+            var stockItems = await _context.Stocks
+                .Include(s => s.Product)
+                .Where(s => productIds.Contains(s.ProductId))
+                .ToListAsync();
+
+            var missingProducts = productIds.Except(stockItems.Select(s => s.ProductId)).ToList();
+            
+            if (missingProducts.Count <= 0)
+                throw new Exceptions.NotFoundException($"Products not found: {string.Join(", ", missingProducts)}");
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                foreach (var (productId, quantity) in items)
+                {
+                    var stockItem = stockItems.First(s => s.ProductId == productId);
+
+                    if (stockItem.QuantityAvailable < quantity)
+                        throw new Exceptions.BadRequestException($"Not enough stock for Product {productId}");
+
+                    stockItem.QuantityAvailable -= quantity;
+                    stockItem.QuantityReserved += quantity;
+
+                    _context.Stocks.Update(stockItem);
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

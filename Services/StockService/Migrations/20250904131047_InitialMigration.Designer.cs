@@ -11,8 +11,8 @@ using StockService.Infraestructure.Data;
 namespace StockService.Migrations
 {
     [DbContext(typeof(StockContext))]
-    [Migration("20250821183748_CreateStockMigration")]
-    partial class CreateStockMigration
+    [Migration("20250904131047_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

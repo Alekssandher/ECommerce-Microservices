@@ -14,6 +14,17 @@ namespace StockService.Infraestructure.Data
 
         public DbSet<Product> Products { get; set; } = default!;
         public DbSet<StockItem> Stocks { get; set; } = default!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // 1:1
+            modelBuilder.Entity<StockItem>()
+                .HasOne(s => s.Product)
+                .WithOne()
+                .HasForeignKey<StockItem>(s => s.ProductId);
+
+            base.OnModelCreating(modelBuilder);
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var connectionString = _config.GetConnectionString("mysql") ?? throw new Exception("Connection String Is Missing.");

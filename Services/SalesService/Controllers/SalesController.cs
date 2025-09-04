@@ -40,8 +40,12 @@ namespace SalesService.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] SaleRequest request)
         {
-            await _salesService.CreateSaleAsync(request);
-            return Created();
+            await _salesService.SendSaleAsync(request);
+            
+            return Accepted(new
+            {
+                Message = "Sale created and pending stock reservation."
+            });
         }
 
         [HttpPatch("{id:int}")]

@@ -50,11 +50,5 @@ namespace StockService.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{productId}/{quantity}")]
-        public async Task<IActionResult> RemoveProductQuantity([FromRoute] int productId, [FromRoute] int quantity)
-        {
-            await _productService.RemoveProductQuantityAsync(productId, quantity);
-            return NoContent();
-        }
     }
 }

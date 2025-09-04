@@ -11,8 +11,7 @@ namespace StockService.Mappers
             {
                 Name = request.Name,
                 Description = request.Description,
-                Price = request.Price,
-                Quantity = request.InitialQuantity
+                Price = request.Price
             };
         }
 
@@ -23,8 +22,7 @@ namespace StockService.Mappers
                 Id = product.Id,
                 Name = product.Name,
                 Description = product.Description,
-                Price = product.Price,
-                Quantity = product.Quantity
+                Price = product.Price
             };
         }
 

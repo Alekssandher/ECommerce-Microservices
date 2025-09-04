@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using SalesService.DTOs;
 using SalesService.Models;
 using Services.Models;
+using Shared.Messages;
 
 namespace SalesService.Mappers
 {
@@ -38,7 +39,7 @@ namespace SalesService.Mappers
         {
             if (saleItems.Count <= 0)
                 return [];
-            
+
             return [.. saleItems.Select(item => new ItemResponse{
                 ProductId = item.ProductId,
                 Quantity = item.Quantity,
@@ -64,6 +65,40 @@ namespace SalesService.Mappers
                 Quantity = item.Quantity,
                 Price = item.Price
             } )];
+        }
+        public static SaleCreated ToSaleCreated(this SaleRequest request)
+        {
+            return new SaleCreated(
+                request.CustomerId,
+                request.Items.ToItemsReserved()
+            );
+        }
+
+
+        private static List<ItemReserved> ToItemsReserved(this List<ItemRequest> Items)
+        {
+            if (Items.Count <= 0)
+                return [];
+
+            return [.. Items.Select( i => new ItemReserved{
+                SaleId = i.SaleId,
+                ProductId = i.ProductId,
+                Quantity = i.Quantity
+            }).ToList()];
+        }
+
+        public static SaleRequest ToRequest(this SaleItemsReservedResponse reserved)
+        {
+            return new SaleRequest
+            {
+                CustomerId = reserved.CustomerId,
+                Items = reserved.ItemsReserved?.Select(i => new ItemRequest
+                {
+                    SaleId = i.SaleId,
+                    ProductId = i.ProductId,
+                    Quantity = i.Quantity
+                }).ToList() ?? new List<ItemRequest>()
+            };
         }
     }
 }

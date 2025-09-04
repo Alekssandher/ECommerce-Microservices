@@ -11,7 +11,10 @@ namespace StockService.Models
     {
         [Key]
         public int ProductId { get; set; }
-        public int QuantityAvailable { get; set; }    
+        public int QuantityAvailable { get; set; }
         public int QuantityReserved { get; set; }    
+        
+        [ForeignKey(nameof(ProductId))]
+        public Product Product { get; set; } = default!;
     }
 }

@@ -11,8 +11,8 @@ using StockService.Infraestructure.Data;
 namespace StockService.Migrations
 {
     [DbContext(typeof(StockContext))]
-    [Migration("20250820190651_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250904132059_Stock_And_Product_Relate")]
+    partial class Stock_And_Product_Relate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,6 +51,33 @@ namespace StockService.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("StockService.Models.StockItem", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantityAvailable")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantityReserved")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId");
+
+                    b.ToTable("Stocks");
+                });
+
+            modelBuilder.Entity("StockService.Models.StockItem", b =>
+                {
+                    b.HasOne("StockService.Models.Product", "Product")
+                        .WithOne()
+                        .HasForeignKey("StockService.Models.StockItem", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 #pragma warning restore 612, 618
         }

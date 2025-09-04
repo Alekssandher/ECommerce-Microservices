@@ -17,16 +17,9 @@ namespace StockService.Services
         public async Task CreateProductAsync(CreateProductRequest request)
         {
             var product = request.ToProductModel();
-            await _productRepository.CreateProductAsync(product);
+            await _productRepository.CreateProductAsync(product, request.InitialQuantity);
         }
 
-        public async Task RemoveProductQuantityAsync(int productId, int quantity)
-        {
-            var product = await _productRepository.GetProductByIdAsync(productId) 
-                ?? throw new Exceptions.NotFoundException("Product not found");
-
-            await _productRepository.ReduceProductQuantityAsync(product, quantity);
-        }
 
         public async Task<List<ProductResponse>> GetAllProductsAsync()
         {
@@ -53,7 +46,6 @@ namespace StockService.Services
             if (request.Name != null) product.Name = request.Name;
             if (request.Description != null) product.Description = request.Description;
             if (request.Price.HasValue) product.Price = request.Price.Value;
-            if (request.Quantity.HasValue) product.Quantity = request.Quantity.Value;
 
             await _productRepository.UpdateProductAsync(product);
         }

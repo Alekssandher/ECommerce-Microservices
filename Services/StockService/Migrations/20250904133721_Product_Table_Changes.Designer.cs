@@ -11,8 +11,8 @@ using StockService.Infraestructure.Data;
 namespace StockService.Migrations
 {
     [DbContext(typeof(StockContext))]
-    [Migration("20250902144334_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250904133721_Product_Table_Changes")]
+    partial class Product_Table_Changes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,9 +45,6 @@ namespace StockService.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Products");
@@ -56,10 +53,7 @@ namespace StockService.Migrations
             modelBuilder.Entity("StockService.Models.StockItem", b =>
                 {
                     b.Property<int>("ProductId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ProductId"));
 
                     b.Property<int>("QuantityAvailable")
                         .HasColumnType("int");
@@ -70,6 +64,17 @@ namespace StockService.Migrations
                     b.HasKey("ProductId");
 
                     b.ToTable("Stocks");
+                });
+
+            modelBuilder.Entity("StockService.Models.StockItem", b =>
+                {
+                    b.HasOne("StockService.Models.Product", "Product")
+                        .WithOne()
+                        .HasForeignKey("StockService.Models.StockItem", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 #pragma warning restore 612, 618
         }

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MassTransit;
+using MassTransit.Transports;
 using Shared.Exceptions;
+using Shared.Mappers;
 using Shared.Messages;
 using Shared.ModelViews;
 using StockService.Consumers.DTOs;
@@ -14,40 +16,30 @@ namespace StockService.Consumers
     public class SaleCreatedConsumer : IConsumer<SaleCreated>
     {
         private readonly IStockManagementService _stockService;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public SaleCreatedConsumer(IStockManagementService stockService, IProductService productService)
+        public SaleCreatedConsumer(IStockManagementService stockService, IPublishEndpoint publishEndpoint)
         {
             _stockService = stockService;
+            _publishEndpoint = publishEndpoint;
          
         }
-        
+
         public async Task Consume(ConsumeContext<SaleCreated> context)
         {
-            var message = context.Message;
+            SaleCreated message = context.Message;
 
-            try
-            {
-                await _stockService.ReserveStockAsync(message.ProductId, message.Quantity);
-                
-                await context.Publish(new StockReserved
-                (
-                    message.SaleId,
-                    message.ProductId,
-                    message.Quantity
-                   
-                ));
-            }
-            catch (Exception ex)
-            {
+            var items = message.Items
+                .Select(i => (productId: i.ProductId, quantity: i.Quantity))
+                .ToList();
 
-                await context.Publish(new StockReservationFailed
-                (
-                    message.ProductId,
-                    message.Quantity,
-                    ex.Message
-                ));
-            }
-            ;
+
+            await _stockService.ReserveStockItemsAsync(items);
+
+            await _publishEndpoint.Publish(
+                message.ToReservedResponse()
+            );
+            
         }
     }
 }

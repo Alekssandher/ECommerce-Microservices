@@ -23,6 +23,7 @@ namespace SalesService.Models
     {
         Pending,
         Confirmed,
+        NotAllowed,
         Canceled
     }
 }

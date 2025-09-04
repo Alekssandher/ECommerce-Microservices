@@ -23,10 +23,15 @@ namespace SalesService.Services
 
         public async Task CreateSaleAsync(SaleRequest request)
         {
+            _ = await _salesRepository.CreateSaleAsync(request.ToSaleModel());
+        }
+
+        public async Task SendSaleAsync(SaleRequest request)
+        {
             if (request.CustomerId <= 0)
                 throw new Exceptions.BadRequestException("Customer ID must be greater than zero");
 
-            if (!request.Items.Any())
+            if (request.Items.Count <= 0)
                 throw new Exceptions.BadRequestException("Sale must contain at least one item");
 
             foreach (var item in request.Items)
@@ -41,33 +46,37 @@ namespace SalesService.Services
                     throw new Exceptions.BadRequestException($"Price must be greater than zero for Product ID: {item.ProductId}");
             }
 
-            var sale = await _salesRepository.CreateSaleAsync(request.ToSaleModel());
-
-            foreach (var item in request.Items)
-            {
-                try
-                {
-                    await _publishEndpoint.Publish(new SaleCreated(
-                        SaleId: sale.Id,
-                        ProductId: item.ProductId,
-                        Quantity: item.Quantity
-                    ));
-                }
-                catch (Exception ex)
-                {
-                    await _publishEndpoint.Publish(new SaleCreationFailed(
-                        CustomerId: request.CustomerId,
-                        ProductId: item.ProductId,
-                        Quantity: item.Quantity,
-                        Reason: $"Failed to publish sale creation event: {ex.Message}"
-                    ));
+            await _publishEndpoint.Publish(request.ToSaleCreated());
 
 
-                    _logger.LogError($"Failed to publish SaleCreated event for Item {item.ProductId}, Customer {request.CustomerId}\nEx: {ex}");
-                }
-            }
 
-            
+            // var sale = await _salesRepository.CreateSaleAsync(request.ToSaleModel());
+
+            // foreach (var item in request.Items)
+            // {
+            //     try
+            //     {
+            //         await _publishEndpoint.Publish(new SaleCreated(
+            //             SaleId: sale.Id,
+            //             ProductId: item.ProductId,
+            //             Quantity: item.Quantity
+            //         ));
+            //     }
+            //     catch (Exception ex)
+            //     {
+            //         await _publishEndpoint.Publish(new SaleCreationFailed(
+            //             CustomerId: request.CustomerId,
+            //             ProductId: item.ProductId,
+            //             Quantity: item.Quantity,
+            //             Reason: $"Failed to publish sale creation event: {ex.Message}"
+            //         ));
+
+
+            //         _logger.LogError($"Failed to publish SaleCreated event for Item {item.ProductId}, Customer {request.CustomerId}\nEx: {ex}");
+            //     }
+            // }
+
+
         }
 
         public async Task CancelSaleAsync(int saleId)

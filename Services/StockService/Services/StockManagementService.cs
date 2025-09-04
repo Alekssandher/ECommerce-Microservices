@@ -39,6 +39,11 @@ namespace StockService.Services
             await _stockRepository.ReserveStockAsync(stockItem, quantity);
         }
 
+        public async Task ReserveStockItemsAsync(List<(int productId, int quantity)> items)
+        {
+            await _stockRepository.ReserveStockItemsAsync(items);
+        }
+
         public async Task ReleaseStockAsync(int productId, int quantity)
         {
             var stockItem = await _stockRepository.GetStockItemByProductIdAsync(productId)
