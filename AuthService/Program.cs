@@ -1,4 +1,6 @@
 using AuthService.Extensions;
+using Shared.Extensions;
+using Shared.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,8 +17,13 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi().CacheOutput();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseHttpsRedirection();
 app.MapControllers();
+
+app.UseMiddleware<GlobalExceptionHandler>();
 
 app.Run();
 

@@ -14,15 +14,6 @@ using Shared.Exceptions;
 
 namespace AuthService.Services
 {
-    public interface IJwtService
-    {
-        Task<string> GenerateJwtToken(LoginDto loginDto);
-        Task CreateUser(CreateUserDto createUserDto);
-        Task CreateManager(CreateUserDto createUserDto);
-        string ExtractEmail(string token);
-        string ExtractRole(string token);
-    }
-
     public class JwtService : IJwtService
     {
         private readonly string jwtKey;
@@ -52,9 +43,9 @@ namespace AuthService.Services
             var user = await _userRepository.GetUserByEmailAsync(loginDto.Email)
                 ?? throw new Exceptions.BadRequestException("Wrong User or Password.");
 
-            var hash = BCrypt.Net.BCrypt.HashPassword(loginDto.Password);
+            var validPassword = BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password);
 
-            if (user.Password != hash)
+            if (validPassword == false)
             {
                 throw new Exceptions.BadRequestException("Wrong User or Password.");
             }
@@ -153,8 +144,13 @@ namespace AuthService.Services
 
         private async Task CheckIfUserExists(string email)
         {
-            _ = await _userRepository.GetUserByEmailAsync(email)
-                ?? throw new Exceptions.BadRequestException("User Already Exists With This Email.");
+            var user = await _userRepository.GetUserByEmailAsync(email);
+
+            if (user is not null)
+                throw new Exceptions.BadRequestException("User Already Exists With This Email.");
+
+            return;
+            
         }
         public async Task CreateUser(CreateUserDto createUserDto)
         {
