@@ -10,7 +10,7 @@ namespace SalesService.Repositories.Interfaces
         Task DeleteSaleAsync(Sale sale);
         Task ConfirmSaleAsync(Sale sale);
         Task<Sale?> GetByIdAsync(int id);
-        Task<List<Sale>> GetAllAsync();
+        Task<List<Sale>> GetAllAsync(int usid);
         Task AddAsync(Sale sale);
     }
 }

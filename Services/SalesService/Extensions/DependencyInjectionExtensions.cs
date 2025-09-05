@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SalesService.Infraestructure.Data;
 using SalesService.Repositories;
 using SalesService.Repositories.Interfaces;
+using SalesService.Services;
 using SalesService.Services.Interfaces;
 
 namespace SalesService.Extensions
@@ -23,6 +24,7 @@ namespace SalesService.Extensions
 
             // Services
             services.AddScoped<ISalesService, Services.SalesService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         }
     }

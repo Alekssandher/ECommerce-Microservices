@@ -15,11 +15,13 @@ namespace SalesService.Services
     {
         private readonly ISalesRepository _salesRepository;
         private readonly IPublishEndpoint _publishEndpoint;
+        private readonly ICurrentUserService _currentUserService;
         private readonly ILogger<SalesService> _logger;
-        public SalesService(ISalesRepository salesRepository, IPublishEndpoint publishEndpoint, ILogger<SalesService> logger)
+        public SalesService(ISalesRepository salesRepository, IPublishEndpoint publishEndpoint, ILogger<SalesService> logger, ICurrentUserService currentUserService)
         {
             _salesRepository = salesRepository;
             _publishEndpoint = publishEndpoint;
+            _currentUserService = currentUserService;
             _logger = logger;
         }
 
@@ -101,7 +103,9 @@ namespace SalesService.Services
 
         public async Task<List<SaleResponse>> GetAllSalesAsync()
         {
-            var sales = await _salesRepository.GetAllAsync();
+            var usid = _currentUserService.UserId;
+            
+            var sales = await _salesRepository.GetAllAsync(usid);
             return sales.ToSaleResponseList();
         }
 

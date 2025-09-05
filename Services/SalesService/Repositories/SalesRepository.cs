@@ -54,10 +54,10 @@ namespace SalesService.Repositories
             await _salesContext.SaveChangesAsync();
         }
 
-        public async Task<List<Sale>> GetAllAsync()
+        public async Task<List<Sale>> GetAllAsync(int usid)
         {
             return await _salesContext.Sales
-                .Include(s => s.Items)
+                .Include(s => s.Items).Where(s => s.CustomerId == usid)
                 .ToListAsync();
         }
 

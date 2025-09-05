@@ -53,7 +53,8 @@ namespace AuthService.Services
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("Role", user.Role.ToString())
+                new Claim("Role", user.Role.ToString()),
+                new Claim("UserId", user.Id.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
