@@ -57,21 +57,24 @@ namespace SalesService.Repositories
         public async Task<List<Sale>> GetAllAsync(int usid)
         {
             return await _salesContext.Sales
-                .Include(s => s.Items).Where(s => s.CustomerId == usid)
+                .Include(s => s.Items)
+                .Where(s => s.CustomerId == usid)
                 .ToListAsync();
         }
 
-        public async Task<Sale?> GetByIdAsync(int id)
+        public async Task<Sale?> GetByIdAsync(int id, int usid)
         {
             return await _salesContext.Sales
                 .Include(s => s.Items)
+                .Where(s => s.CustomerId == usid)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
 
-        public async Task CancelSaleAsync(int saleId)
+        public async Task CancelSaleAsync(int saleId, int usid)
         {
             _ = await _salesContext.Sales
                 .Where(s => s.Id == saleId)
+                .Where(s => s.CustomerId == usid)
                 .ExecuteUpdateAsync(setters => setters
                     .SetProperty(p => p.Status, SaleStatus.Canceled)
                 ); 

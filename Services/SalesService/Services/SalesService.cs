@@ -1,4 +1,5 @@
 using MassTransit;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using SalesService.DTOs;
 using SalesService.Mappers;
 using SalesService.Models;
@@ -27,6 +28,9 @@ namespace SalesService.Services
 
         public async Task<int> CreateSaleAsync(SaleItemsReservedResponse request)
         {
+            var usid = _currentUserService.UserId;
+            request.CustomerId = usid;
+
             var sale = await _salesRepository.CreateSaleAsync(request.ToModel());
 
             return sale.Id;
@@ -49,13 +53,19 @@ namespace SalesService.Services
 
             var sale = request.ToSaleModel();
 
+            var usid = _currentUserService.UserId; 
+
+            sale.CustomerId = usid; 
+
             await _publishEndpoint.Publish(sale.ToSaleCreated());
             
         }
 
         public async Task CancelSaleAsync(int saleId)
         {
-            var sale = await _salesRepository.GetByIdAsync(saleId)
+            var usid = _currentUserService.UserId;
+
+            var sale = await _salesRepository.GetByIdAsync(saleId, usid)
                 ?? throw new Exceptions.NotFoundException($"Sale with ID: {saleId} Not Found.");
                 
             if (sale.Status != SaleStatus.Pending)
@@ -74,13 +84,15 @@ namespace SalesService.Services
 
             }
 
-            await _salesRepository.CancelSaleAsync(sale.Id);
+            await _salesRepository.CancelSaleAsync(sale.Id, usid);
 
         }
 
         public async Task ConfirmSaleAsync(int saleId)
         {
-            var sale = await _salesRepository.GetByIdAsync(saleId)
+            var usid = _currentUserService.UserId;
+
+            var sale = await _salesRepository.GetByIdAsync(saleId, usid)
                 ?? throw new Exceptions.NotFoundException($"Sale with ID: {saleId} Not Found.");
 
             if (sale.Status != SaleStatus.Pending)
@@ -104,14 +116,16 @@ namespace SalesService.Services
         public async Task<List<SaleResponse>> GetAllSalesAsync()
         {
             var usid = _currentUserService.UserId;
-            
+
             var sales = await _salesRepository.GetAllAsync(usid);
             return sales.ToSaleResponseList();
         }
 
         public async Task<SaleResponse> GetSaleByIdAsync(int saleId)
         {
-            var sale = await _salesRepository.GetByIdAsync(saleId)
+            var usid = _currentUserService.UserId;
+
+            var sale = await _salesRepository.GetByIdAsync(saleId, usid)
                 ?? throw new Exceptions.NotFoundException($"Sale with ID: {saleId} Not Found.");
 
             return sale.ToSaleResponse();
@@ -119,7 +133,9 @@ namespace SalesService.Services
 
         public async Task UnauthorizeSale(int saleId)
         {
-            var sale = await _salesRepository.GetByIdAsync(saleId)
+            var usid = _currentUserService.UserId;
+
+            var sale = await _salesRepository.GetByIdAsync(saleId, usid)
                 ?? throw new Exceptions.NotFoundException($"Sale with ID: {saleId} Not Found.");
 
             await _salesRepository.UnauthorizeSale(sale);

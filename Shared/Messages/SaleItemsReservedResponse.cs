@@ -8,7 +8,7 @@ namespace Shared.Messages
     public class SaleItemsReservedResponse
     {
         public int SaleId { get; init; }
-        public int CustomerId { get; init; }
+        public int CustomerId { get; set; }
         public List<ItemReserved> ItemsReserved { get; init; } = default!;
         
     }
