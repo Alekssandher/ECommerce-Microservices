@@ -8,11 +8,11 @@ using StockService.Infraestructure.Data;
 
 #nullable disable
 
-namespace StockService.Migrations
+namespace StockService.Infraestructure.Migrations
 {
     [DbContext(typeof(StockContext))]
-    [Migration("20250904133721_Product_Table_Changes")]
-    partial class Product_Table_Changes
+    [Migration("20250908202409_InitialStockServiceMigration")]
+    partial class InitialStockServiceMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

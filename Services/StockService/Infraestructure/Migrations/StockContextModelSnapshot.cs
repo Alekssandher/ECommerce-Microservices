@@ -7,7 +7,7 @@ using StockService.Infraestructure.Data;
 
 #nullable disable
 
-namespace StockService.Migrations
+namespace StockService.Infraestructure.Migrations
 {
     [DbContext(typeof(StockContext))]
     partial class StockContextModelSnapshot : ModelSnapshot
