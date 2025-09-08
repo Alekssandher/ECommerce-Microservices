@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MassTransit;
 using SalesService.Services.Interfaces;
+using Serilog;
 using Shared.Messages;
 using Shared.ModelViews;
 
@@ -21,16 +22,46 @@ namespace SalesService.Consumers
         public async Task Consume(ConsumeContext<SaleCreationFailed> context)
         {
             var message = context.Message;
-            Console.WriteLine("Reached SaleFailed");
 
-            var saleId = await _salesService.CreateSaleAsync(new SaleItemsReservedResponse
+            Log.Information("Received SaleCreationFailed message - MessageId: {MessageId}, CorrelationId: {CorrelationId}, SaleId: {SaleId}, CustomerId: {CustomerId}",
+                context.MessageId, context.CorrelationId, message.SaleId, message.CustomerId);
+
+            if (message == null )
             {
-                SaleId = message.SaleId,
-                CustomerId = message.CustomerId,
-                ItemsReserved = []
-            });
+                Log.Warning("Invalid or empty SaleCreationFailed message received - MessageId: {MessageId}, Skipping processing",
+                    context.MessageId);
+                return; 
+            }
 
-            await _salesService.UnauthorizeSale(saleId);
+            try
+            {
+                Log.Information("Attempting to recreate sale for failed attempt - SaleId: {SaleId}, CustomerId: {CustomerId}, MessageId: {MessageId}",
+                    message.SaleId, message.CustomerId, context.MessageId);
+
+                var saleId = await _salesService.CreateSaleAsync(new SaleItemsReservedResponse
+                {
+                    SaleId = message.SaleId,
+                    CustomerId = message.CustomerId,
+                    ItemsReserved = []
+                });
+
+                Log.Information("Sale recreated successfully - OriginalSaleId: {OriginalSaleId}, CreatedSaleId: {CreatedSaleId}, MessageId: {MessageId}",
+                    message.SaleId, saleId, context.MessageId);
+
+                Log.Information("Attempting to unauthorize sale - SaleId: {SaleId}, MessageId: {MessageId}",
+                    saleId, context.MessageId);
+
+                await _salesService.UnauthorizeSale(saleId);
+
+                Log.Information("Sale unauthorized successfully - SaleId: {SaleId}, MessageId: {MessageId}",
+                    saleId, context.MessageId);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to process SaleCreationFailed - SaleId: {SaleId}, CustomerId: {CustomerId}, MessageId: {MessageId}, Error: {Error}",
+                    message.SaleId, message.CustomerId, context.MessageId, ex.Message);
+                throw; 
+            }
         }
     }
 }

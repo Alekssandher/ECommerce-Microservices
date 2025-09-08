@@ -1,4 +1,3 @@
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using StockService.Infraestructure.Data;
 using StockService.Repositories;

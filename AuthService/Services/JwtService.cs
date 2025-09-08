@@ -10,6 +10,7 @@ using AuthService.Mappers;
 using AuthService.Models;
 using AuthService.Repositories;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using Shared.Exceptions;
 
 namespace AuthService.Services
@@ -40,13 +41,22 @@ namespace AuthService.Services
         
         public async Task<string> GenerateJwtToken(LoginDto loginDto)
         {
-            var user = await _userRepository.GetUserByEmailAsync(loginDto.Email)
-                ?? throw new Exceptions.BadRequestException("Wrong User or Password.");
+            Log.Information("Login attempt for email: {Email}", loginDto.Email);
+            
+            var user = await _userRepository.GetUserByEmailAsync(loginDto.Email);
+
+            if (user is null)
+            {
+                Log.Warning("Failed login attempt for non-existent email: {Email}", loginDto.Email);
+                throw new Exceptions.BadRequestException("Wrong User or Password.");
+            }
+            
 
             var validPassword = BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password);
 
             if (validPassword == false)
             {
+                Log.Warning("Failed login attempt for email: {Email} - Invalid password", loginDto.Email);
                 throw new Exceptions.BadRequestException("Wrong User or Password.");
             }
 
@@ -67,6 +77,12 @@ namespace AuthService.Services
                 expires: DateTime.Now.AddMinutes(60),
                 signingCredentials: creds
             );
+
+            Log.Information("Generated Token For User ID: {UserId}, Email: {Email}, Role: {Role} - Expires: {Expires}",
+                user.Id,
+                user.Email,
+                user.Role,
+                token.ValidTo.ToLocalTime());
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
@@ -145,22 +161,32 @@ namespace AuthService.Services
 
         private async Task CheckIfUserExists(string email)
         {
+            Log.Information("Checking if user exists for email: {Email}", email);
+
             var user = await _userRepository.GetUserByEmailAsync(email);
 
             if (user is not null)
+            {
+                Log.Warning("User already exists attempt for email: {Email}", email);
                 throw new Exceptions.BadRequestException("User Already Exists With This Email.");
+            }
+                
 
             return;
             
         }
         public async Task CreateUser(CreateUserDto createUserDto)
         {
+            Log.Information("Creating client user for email: {Email}", createUserDto.Email);
+
             await CheckIfUserExists(createUserDto.Email);
             await _userRepository.CreateUserAsync(createUserDto.ToModel(UserRoles.Client));
         }
 
         public async Task CreateManager(CreateUserDto createUserDto)
         {
+            Log.Information("Creating manager user for email: {Email}", createUserDto.Email);
+
             await CheckIfUserExists(createUserDto.Email);
             await _userRepository.CreateUserAsync(createUserDto.ToModel(UserRoles.Manager));
         }

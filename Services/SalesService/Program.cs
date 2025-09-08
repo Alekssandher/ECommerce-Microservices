@@ -1,13 +1,16 @@
 using Shared.Extensions;
 using SalesService.Extensions;
 using Shared.Middlewares;
-using Shared.ModelViews;
 using SalesService.Consumers;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.RegisterDependencies(builder.Configuration);
 builder.Services.RegisterAuthorization(builder.Configuration);
+
+builder.Services.RegisterSeriLog("sales-service");
+
 builder.Services.AddRabbit(builder.Configuration, bus =>
 {
     bus.AddConsumer<SaleCreationFailedConsumer>();
@@ -20,6 +23,8 @@ builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
+
+app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment())
 {

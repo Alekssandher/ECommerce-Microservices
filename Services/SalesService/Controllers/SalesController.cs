@@ -25,7 +25,7 @@ namespace SalesService.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
-        {            
+        {
             var sales = await _salesService.GetAllSalesAsync();
             return Ok(new OkResponse<List<SaleResponse>>(string.Empty, string.Empty, sales));
         }

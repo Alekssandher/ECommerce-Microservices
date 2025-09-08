@@ -6,19 +6,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Shared.ModelViews;
 using Shared.Exceptions;
+using Serilog;
 
 namespace Shared.Middlewares
 {
     public class GlobalExceptionHandler
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<GlobalExceptionHandler> _logger;
         private static readonly InternalError errorResponse = new();
     
         public GlobalExceptionHandler(RequestDelegate next, ILogger<GlobalExceptionHandler> logger)
         {
             _next = next;
-            _logger = logger;
+            
         }
 
         public async Task Invoke(HttpContext context)
@@ -43,7 +43,7 @@ namespace Shared.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unhandled exception occurred while processing request.");
+                Log.Error($"Unhandled Exception - Message: {ex.Message}\nException: {ex}.");
 
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 context.Response.ContentType = "application/json";

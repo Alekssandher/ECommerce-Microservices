@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MassTransit;
 using Shared.Exceptions;
 using StockService.Dtos;
-using StockService.Models;
 using StockService.Repositories;
 
 namespace StockService.Services

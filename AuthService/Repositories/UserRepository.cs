@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AuthService.Infraestructure.Data;
 using AuthService.Models;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace AuthService.Repositories
 {
@@ -21,6 +22,8 @@ namespace AuthService.Repositories
         {
             await _usersContext.Users.AddAsync(userModel);
             await _usersContext.SaveChangesAsync();
+
+            Log.Information($"Registred user with ID: {userModel.Id}");
         }
 
         public async Task<UserModel?> GetUserByEmailAsync(string email)
