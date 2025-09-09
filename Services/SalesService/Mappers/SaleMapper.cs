@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using SalesService.DTOs;
 using SalesService.Models;
 using Services.Models;
@@ -9,7 +5,7 @@ using Shared.Messages;
 
 namespace SalesService.Mappers
 {
-    internal static class SaleMapper
+    public static class SaleMapper
     {
         public static Sale ToSaleModel(this SaleRequest saleRequest)
         {

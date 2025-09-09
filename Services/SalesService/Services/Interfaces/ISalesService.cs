@@ -1,5 +1,4 @@
 using SalesService.DTOs;
-using SalesService.Models;
 using Shared.Messages;
 
 namespace SalesService.Services.Interfaces

@@ -4,7 +4,7 @@ using Services.Models;
 
 namespace SalesService.Models
 {
-    internal class Sale
+    public class Sale
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

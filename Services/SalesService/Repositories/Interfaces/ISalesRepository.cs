@@ -2,7 +2,7 @@ using SalesService.Models;
 
 namespace SalesService.Repositories.Interfaces
 {
-    internal interface ISalesRepository
+    public interface ISalesRepository
     {
         Task<Sale> CreateSaleAsync(Sale sale);
         Task CancelSaleAsync(int saleId, int usid);

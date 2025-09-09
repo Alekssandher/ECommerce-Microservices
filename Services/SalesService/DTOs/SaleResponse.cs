@@ -1,5 +1,3 @@
-using SalesService.Models;
-
 namespace SalesService.DTOs
 {
     public class SaleResponse

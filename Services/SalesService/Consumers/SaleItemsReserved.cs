@@ -1,10 +1,7 @@
 using MassTransit;
-using SalesService.DTOs;
-using SalesService.Mappers;
 using SalesService.Services.Interfaces;
 using Serilog;
 using Shared.Messages;
-using Shared.ModelViews;
 
 namespace SalesService.Consumers
 {

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Services.Models
 {
-    internal class SaleItem
+    public class SaleItem
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

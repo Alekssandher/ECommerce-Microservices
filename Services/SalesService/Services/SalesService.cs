@@ -1,5 +1,4 @@
 using MassTransit;
-using Microsoft.Extensions.Configuration.UserSecrets;
 using SalesService.DTOs;
 using SalesService.Mappers;
 using SalesService.Models;
@@ -9,17 +8,16 @@ using Serilog;
 using Shared.DTOs;
 using Shared.Exceptions;
 using Shared.Messages;
-using Shared.ModelViews;
 
 namespace SalesService.Services
 {
-    internal class SalesService : ISalesService
+    public class SalesService : ISalesService
     {
         private readonly ISalesRepository _salesRepository;
         private readonly IPublishEndpoint _publishEndpoint;
         private readonly ICurrentUserService _currentUserService;
 
-        public SalesService(ISalesRepository salesRepository, IPublishEndpoint publishEndpoint, ILogger<SalesService> logger, ICurrentUserService currentUserService)
+        public SalesService(ISalesRepository salesRepository, IPublishEndpoint publishEndpoint, ICurrentUserService currentUserService)
         {
             _salesRepository = salesRepository;
             _publishEndpoint = publishEndpoint;
@@ -29,8 +27,6 @@ namespace SalesService.Services
 
         public async Task<int> CreateSaleAsync(SaleItemsReservedResponse request)
         {
-            Log.Information("Starting sale creation - CustomerId: {CustomerId}, SaleId: {SaleId}",
-                request.CustomerId, request.SaleId);
 
             if (request == null)
             {
@@ -38,6 +34,10 @@ namespace SalesService.Services
                     request?.CustomerId, request?.SaleId );
                 throw new Exceptions.BadRequestException("Invalid sale request data");
             }
+
+            Log.Information("Starting sale creation - CustomerId: {CustomerId}, SaleId: {SaleId}",
+                request.CustomerId, request.SaleId);
+
 
             var usid = _currentUserService.UserId;
             request.CustomerId = usid;
