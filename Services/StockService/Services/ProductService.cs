@@ -2,13 +2,15 @@ using StockService.Dtos;
 using StockService.Mappers;
 using StockService.Repositories;
 using Shared.Exceptions;
+using System.Runtime.CompilerServices;
 
 namespace StockService.Services
 {
-    internal class ProductService : IProductService
+    
+    public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
-        
+
         public ProductService(IProductRepository productRepository)
         {
             _productRepository = productRepository;
@@ -28,7 +30,7 @@ namespace StockService.Services
 
         public async Task<ProductResponse> GetProductByIdAsync(int productId)
         {
-            var product = await _productRepository.GetProductByIdAsync(productId) 
+            var product = await _productRepository.GetProductByIdAsync(productId)
                 ?? throw new Exceptions.NotFoundException("Product not found");
 
             return product.ToProductResponse();

@@ -29,7 +29,7 @@ namespace StockService.Mappers
         public static List<ProductResponse> ToProductResponseList(this List<Product> products)
         {
             if (products == null || products.Count == 0)
-                return new List<ProductResponse>();
+                return [];
 
             return products.Select(product => product.ToProductResponse()).ToList();
         }

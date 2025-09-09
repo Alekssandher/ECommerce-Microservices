@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
+    <AssemblyName>ProductService.Tests</AssemblyName>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
@@ -17,8 +18,9 @@
     </PackageReference>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Shared.csproj" />
   </ItemGroup>
+ 
 </Project>
