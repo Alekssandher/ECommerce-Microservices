@@ -19,11 +19,11 @@ builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
-
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.MapHealthChecks("/health");
 
 app.UseHttpsRedirection();
 

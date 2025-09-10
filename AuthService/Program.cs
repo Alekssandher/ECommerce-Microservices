@@ -18,6 +18,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi().CacheOutput();
 }
 
+app.MapHealthChecks("/health");
+
 app.UseAuthentication();
 app.UseAuthorization();
 

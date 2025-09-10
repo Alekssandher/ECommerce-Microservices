@@ -30,9 +30,10 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi()
         .CacheOutput();
-    app.MapHealthChecks("/health");
+
 }
 
+app.MapHealthChecks("/health");
 app.UseHttpsRedirection();
 
 app.UseMiddleware<GlobalExceptionHandler>();
