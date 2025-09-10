@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AuthService.Models
 {
@@ -16,6 +17,7 @@ namespace AuthService.Models
         public string Email { get; init; } = default!;
         public string Password { get; init; } = default!;
         public UserRoles Role { get; init; }
+        public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
     }
 
     public enum UserRoles

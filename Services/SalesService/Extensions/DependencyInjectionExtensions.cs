@@ -26,6 +26,7 @@ namespace SalesService.Extensions
             services.AddScoped<ISalesService, Services.SalesService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
 
+            services.AddHealthChecks();
         }
     }
 }

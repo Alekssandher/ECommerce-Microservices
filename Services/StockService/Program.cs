@@ -1,7 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using Shared.Extensions;
 using Shared.Middlewares;
 using StockService.Consumers;
 using StockService.Extensions;
+using StockService.Infraestructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,16 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+var isDocker = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Docker";
+
+if (isDocker)
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<StockContext>();
+    await db.Database.MigrateAsync();
+}
+
 app.MapHealthChecks("/health");
 
 app.UseHttpsRedirection();

@@ -1,0 +1,54 @@
+# .dockerignore
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+.vscode/
+.vs/
+
+# Documentation
+README.md
+*.md
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Build artifacts
+**/bin/
+**/obj/
+**/out/
+**/logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+*.swp
+*.swo
+
+# Test results
+TestResults/
+**/TestResults/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Temporary files
+*.tmp
+*.temp

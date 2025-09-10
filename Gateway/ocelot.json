@@ -1,6 +1,6 @@
 {
     "GlobalConfiguration": {
-        "BaseUrl": "https://localhost:5001"
+        "BaseUrl": "http://gateway:5001"
     },
     "RateLimitOptions": {
         "EnableRateLimiting": true,
@@ -12,21 +12,21 @@
         {
         "DownstreamPathTemplate": "/api/auth/login",
         "DownstreamScheme": "http",
-        "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5004 } ],
+        "DownstreamHostAndPorts": [ { "Host": "authservice", "Port": 5004 } ],
         "UpstreamPathTemplate": "/auth/login",
         "UpstreamHttpMethod": [ "POST" ]
         },
         {
         "DownstreamPathTemplate": "/api/auth/register/user",
         "DownstreamScheme": "http",
-        "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5004 } ],
+        "DownstreamHostAndPorts": [ { "Host": "authservice", "Port": 5004 } ],
         "UpstreamPathTemplate": "/auth/register/user",
         "UpstreamHttpMethod": [ "POST" ]
         },
         {
         "DownstreamPathTemplate": "/api/auth/register/manager",
         "DownstreamScheme": "http",
-        "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5004 } ],
+        "DownstreamHostAndPorts": [ { "Host": "authservice", "Port": 5004 } ],
         "UpstreamPathTemplate": "/auth/register/manager",
         "UpstreamHttpMethod": [ "POST" ],
         "AuthenticationOptions": {
@@ -39,7 +39,7 @@
         {
         "DownstreamPathTemplate": "/api/Sales/{id}",
         "DownstreamScheme": "http",
-        "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5002 } ],
+        "DownstreamHostAndPorts": [ { "Host": "salesservice", "Port": 5002 } ],
         "UpstreamPathTemplate": "/sales/{id}",
         "UpstreamHttpMethod": [ "GET", "PATCH", "DELETE" ],
         "AuthenticationOptions": {
@@ -52,21 +52,34 @@
         {
         "DownstreamPathTemplate": "/api/Products",
         "DownstreamScheme": "http",
-        "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5003 } ],
+        "DownstreamHostAndPorts": [ { "Host": "stockservice", "Port": 5003 } ],
         "UpstreamPathTemplate": "/products",
-        "UpstreamHttpMethod": [ "GET", "POST", "PUT" ]
+        "UpstreamHttpMethod": [ "GET" ]
+        },
+        {
+        "DownstreamPathTemplate": "/api/Products",
+        "DownstreamScheme": "http",
+        "DownstreamHostAndPorts": [ { "Host": "stockservice", "Port": 5003 } ],
+        "UpstreamPathTemplate": "/products",
+        "UpstreamHttpMethod": [ "POST", "PUT" ],
+        "AuthenticationOptions": {
+            "AuthenticationProviderKey": "Bearer",
+            "AllowedScopes": []
+        },
+        "RouteClaimsRequirement": { "Role": "Manager" }
+        
         },
         {
         "DownstreamPathTemplate": "/api/Products/{productId}",
         "DownstreamScheme": "http",
-        "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5003 } ],
+        "DownstreamHostAndPorts": [ { "Host": "stockservice", "Port": 5003 } ],
         "UpstreamPathTemplate": "/products/{productId}",
         "UpstreamHttpMethod": [ "GET" ]
         },
         {
         "DownstreamPathTemplate": "/api/Products/{productId}/{quantity}",
         "DownstreamScheme": "http",
-        "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5003 } ],
+        "DownstreamHostAndPorts": [ { "Host": "stockservice", "Port": 5003 } ],
         "UpstreamPathTemplate": "/products/{productId}/{quantity}",
         "UpstreamHttpMethod": [ "DELETE" ]
         },
@@ -74,7 +87,7 @@
         {
         "DownstreamPathTemplate": "/api/Stock/{productId}",
         "DownstreamScheme": "http",
-        "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5003 } ],
+        "DownstreamHostAndPorts": [ { "Host": "stockservice", "Port": 5003 } ],
         "UpstreamPathTemplate": "/stock/{productId}",
         "UpstreamHttpMethod": [ "GET" ],
         "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" },
@@ -83,7 +96,7 @@
         {
         "DownstreamPathTemplate": "/api/Stock/{productId}/available",
         "DownstreamScheme": "http",
-        "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5003 } ],
+        "DownstreamHostAndPorts": [ { "Host": "stockservice", "Port": 5003 } ],
         "UpstreamPathTemplate": "/stock/{productId}/available",
         "UpstreamHttpMethod": [ "GET" ],
         "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" },
@@ -92,7 +105,7 @@
         {
         "DownstreamPathTemplate": "/api/Stock/{productId}/reserve/{quantity}",
         "DownstreamScheme": "http",
-        "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5003 } ],
+        "DownstreamHostAndPorts": [ { "Host": "stockservice", "Port": 5003 } ],
         "UpstreamPathTemplate": "/stock/{productId}/reserve/{quantity}",
         "UpstreamHttpMethod": [ "POST" ],
         "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" },
@@ -101,7 +114,7 @@
         {
         "DownstreamPathTemplate": "/api/Stock/{productId}/release/{quantity}",
         "DownstreamScheme": "http",
-        "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5003 } ],
+        "DownstreamHostAndPorts": [ { "Host": "stockservice", "Port": 5003 } ],
         "UpstreamPathTemplate": "/stock/{productId}/release/{quantity}",
         "UpstreamHttpMethod": [ "POST" ],
         "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" },
@@ -110,7 +123,7 @@
         {
         "DownstreamPathTemplate": "/api/Stock/{productId}/remove/{quantity}",
         "DownstreamScheme": "http",
-        "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5003 } ],
+        "DownstreamHostAndPorts": [ { "Host": "stockservice", "Port": 5003 } ],
         "UpstreamPathTemplate": "/stock/{productId}/remove/{quantity}",
         "UpstreamHttpMethod": [ "DELETE" ],
         "AuthenticationOptions": { "AuthenticationProviderKey": "Bearer" },

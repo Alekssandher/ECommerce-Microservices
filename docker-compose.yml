@@ -1,0 +1,148 @@
+services:
+  # Banco de dados MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: ecommerce_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 1234
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - ecommerce_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # RabbitMQ para mensageria
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: ecommerce_rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - ecommerce_network
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  # AuthService
+  authservice:
+    build:
+      context: .
+      dockerfile: AuthService/Dockerfile
+    container_name: ecommerce_authservice
+    restart: unless-stopped
+    ports:
+      - "5004:5004"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5004
+      - ConnectionStrings__mySql=Server=mysql;Database=users_auth_service;Uid=admin;Pwd=1234;
+      - JwtSettings__Key=chavesuperscretainfalivel-nuncaseradescoberta-muahahaha
+      - JwtSettings__Issuer=alek@alek.com
+      - JwtSettings__Audience=alek@alek.com
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - ecommerce_network
+
+  # SalesService
+  salesservice:
+    build:
+      context: .
+      dockerfile: Services/SalesService/Dockerfile
+    container_name: ecommerce_salesservice
+    restart: unless-stopped
+    ports:
+      - "5002:5002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5002
+      - ConnectionStrings__mySql=Server=mysql;Database=sales_micro_service;Uid=admin;Pwd=1234;
+      - JwtSettings__Key=chavesuperscretainfalivel-nuncaseradescoberta-muahahaha
+      - JwtSettings__Issuer=alek@alek.com
+      - JwtSettings__Audience=alek@alek.com
+      - RabbitMq__url=amqp://rabbitmq:5672
+      - RabbitMq__user=guest
+      - RabbitMq__password=guest
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - ecommerce_network
+
+  # StockService
+  stockservice:
+    build:
+      context: .
+      dockerfile: Services/StockService/Dockerfile
+    container_name: ecommerce_stockservice
+    restart: unless-stopped
+    ports:
+      - "5003:5003"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5003
+      - ConnectionStrings__mySql=Server=mysql;Database=stock_micro_service;Uid=admin;Pwd=1234;
+      - RabbitMq__url=amqp://rabbitmq:5672
+      - RabbitMq__user=guest
+      - RabbitMq__password=guest
+      - JwtSettings__Key=chavesuperscretainfalivel-nuncaseradescoberta-muahahaha
+      - JwtSettings__Issuer=alek@alek.com
+      - JwtSettings__Audience=alek@alek.com
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - ecommerce_network
+
+  # Gateway
+  gateway:
+    build:
+      context: .
+      dockerfile: Gateway/Dockerfile
+    container_name: ecommerce_gateway
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:5001
+      - JwtSettings__Key=chavesuperscretainfalivel-nuncaseradescoberta-muahahaha
+      - JwtSettings__Issuer=alek@alek.com
+      - JwtSettings__Audience=alek@alek.com
+    depends_on:
+      - authservice
+      - salesservice
+      - stockservice
+    networks:
+      - ecommerce_network
+
+volumes:
+  mysql_data:
+  rabbitmq_data:
+
+networks:
+  ecommerce_network:
+    driver: bridge

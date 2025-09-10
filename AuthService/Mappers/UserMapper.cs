@@ -17,7 +17,8 @@ namespace AuthService.Mappers
                 Username = dto.Username,
                 Email = dto.Email,
                 Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = role
+                Role = role,
+                CreatedAt = DateTime.UtcNow
             };
         }
     }

@@ -3,6 +3,8 @@ using SalesService.Extensions;
 using Shared.Middlewares;
 using SalesService.Consumers;
 using Serilog;
+using SalesService.Infraestructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,7 @@ builder.Services.AddRabbit(builder.Configuration, bus =>
 }
 );
 
+
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
@@ -32,7 +35,14 @@ if (app.Environment.IsDevelopment())
         .CacheOutput();
 
 }
+var isDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
 
+if (isDocker)
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<SalesContext>();
+    await db.Database.MigrateAsync();
+}
 app.MapHealthChecks("/health");
 app.UseHttpsRedirection();
 

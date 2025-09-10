@@ -21,6 +21,7 @@ namespace AuthService.Extensions
 
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddHealthChecks();
         }
     }
 }

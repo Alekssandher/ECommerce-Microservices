@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <AssemblyName>ProductService.Tests</AssemblyName>
     <Nullable>enable</Nullable>
+    <AssemblyName>StockService</AssemblyName>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 

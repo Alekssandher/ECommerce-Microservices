@@ -17,9 +17,10 @@ namespace AuthService.Infraestructure.Data
         }
 
         internal DbSet<UserModel> Users { get; set; }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            
+
             var connectionString = _config.GetConnectionString("mysql")
                 ?? throw new Exception("Connection String Is Missing.");
 
