@@ -102,13 +102,13 @@ O sistema utiliza eventos assíncronos via RabbitMQ:
 
 1. **Clone o repositório:**
 ```bash
-git clone <url-do-repositorio>
-cd ecommerce-microservices
+git clone https://github.com/Alekssandher/ECommerce-Microservices/
+cd ECommerce-Microservices
 ```
 
-2. **Execute os containers:**
+2. **Builde e Execute os containers:**
 ```bash
-docker-compose up -d
+docker-compose up --build
 ```
 
 3. **Aguarde os serviços ficarem prontos:**
